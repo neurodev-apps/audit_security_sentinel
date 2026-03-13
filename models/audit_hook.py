@@ -1,0 +1,504 @@
+# -*- coding: utf-8 -*-
+
+import hashlib
+import json
+import logging
+import secrets
+import threading
+from datetime import datetime, date
+
+from odoo import api, fields, models, SUPERUSER_ID
+from odoo.http import request
+
+_logger = logging.getLogger(__name__)
+
+# Salt cache keyed by DB name — multi-DB safe
+_salt_cache = {}
+_salt_lock = threading.Lock()
+
+# References to original BaseModel methods — stored at module level
+# so the uninstall_hook can restore them cleanly.
+_original_create = None
+_original_write = None
+_original_unlink = None
+
+
+def _get_audit_salt(env):
+    """Retrieve the hash salt from ir.config_parameter.
+
+    If the parameter ``audit_security_sentinel.hash_salt`` does not exist,
+    a cryptographically-secure random 64-char hex salt is generated, stored
+    in the database and returned.
+
+    The result is cached per database name so multi-DB Odoo processes each
+    use the correct salt.  Access is serialised with ``_salt_lock`` so that
+    concurrent workers never generate two different salts.
+    """
+    dbname = env.cr.dbname
+    with _salt_lock:
+        if dbname in _salt_cache:
+            return _salt_cache[dbname]
+
+        ICP = env['ir.config_parameter'].sudo()
+        salt = ICP.get_param('audit_security_sentinel.hash_salt')
+        if not salt:
+            salt = secrets.token_hex(32)
+            ICP.set_param('audit_security_sentinel.hash_salt', salt)
+            _logger.info("Audit Security Sentinel: Generated new hash salt")
+
+        _salt_cache[dbname] = salt
+        return salt
+
+
+def invalidate_salt_cache():
+    """Invalidate the salt cache for all databases.
+
+    Called on module upgrade so the salt is re-read from the database.
+    """
+    with _salt_lock:
+        _salt_cache.clear()
+
+
+def remove_audit_hooks():
+    """Restore original BaseModel methods when the module is uninstalled.
+
+    Reverts the monkey-patch applied by ``install_audit_hooks`` so that
+    create/write/unlink behave normally after uninstall.
+    """
+    from odoo import models as odoo_models
+    if not getattr(odoo_models.BaseModel, '_audit_sentinel_patched', False):
+        _logger.debug("Audit Security Sentinel: No hooks to remove")
+        return
+    if _original_create:
+        odoo_models.BaseModel.create = _original_create
+    if _original_write:
+        odoo_models.BaseModel.write = _original_write
+    if _original_unlink:
+        odoo_models.BaseModel.unlink = _original_unlink
+    try:
+        delattr(odoo_models.BaseModel, '_audit_sentinel_patched')
+    except AttributeError:
+        pass
+    _logger.info("Audit Security Sentinel: Hooks removed successfully")
+
+
+class BaseModelAuditHook(models.AbstractModel):
+    _name = 'base.model.audit.hook'
+    _description = 'Audit Hook Mixin'
+
+    # Cache for audit rules — keyed by database name to be multi-DB safe
+    _audit_rules_cache = {}
+    _audit_cache_timestamps = {}
+    _rules_lock = threading.Lock()
+    _CACHE_TTL = 300  # 5 minutes cache
+
+    @api.model
+    def _get_audit_rule(self, model_name):
+        """Get active audit rule for a model with caching (multi-DB safe).
+
+        Caches a plain dict (not a recordset) to avoid stale cursor issues
+        when the cache is read across different transactions.  Access is
+        serialised with ``_rules_lock`` for thread safety.
+        """
+        now = fields.Datetime.now()  # Always UTC, avoids naive/aware mismatch
+        dbname = self.env.cr.dbname
+
+        with self._rules_lock:
+            # Invalidate cache if expired for this database
+            db_timestamp = self._audit_cache_timestamps.get(dbname)
+            if (db_timestamp is None or (now - db_timestamp).total_seconds() > self._CACHE_TTL):
+                self._audit_rules_cache[dbname] = {}
+                self._audit_cache_timestamps[dbname] = now
+
+            db_cache = self._audit_rules_cache.setdefault(dbname, {})
+            if model_name in db_cache:
+                return db_cache[model_name]
+
+        # Search outside the lock to avoid holding it during DB queries
+        rule = self.env['audit.rule'].sudo().search([
+            ('model_id.model', '=', model_name),
+            ('active', '=', True),
+        ], limit=1)
+        if rule:
+            result = {
+                'id': rule.id,
+                'log_create': rule.log_create,
+                'log_write': rule.log_write,
+                'log_unlink': rule.log_unlink,
+                'field_names': rule.get_monitored_fields(),
+            }
+        else:
+            result = False
+
+        with self._rules_lock:
+            db_cache = self._audit_rules_cache.setdefault(dbname, {})
+            db_cache[model_name] = result
+
+        return result
+
+    def _get_ip_address(self):
+        """Extract client IP address from request headers."""
+        try:
+            if request and hasattr(request, 'httprequest'):
+                # Check for proxy headers first
+                forwarded_for = request.httprequest.headers.get('X-Forwarded-For')
+                if forwarded_for:
+                    # Take the first IP in the chain (original client)
+                    return forwarded_for.split(',')[0].strip()
+
+                real_ip = request.httprequest.headers.get('X-Real-IP')
+                if real_ip:
+                    return real_ip.strip()
+
+                # Fallback to remote address
+                return request.httprequest.remote_addr or 'Unknown'
+        except Exception:
+            pass
+        return 'System/Cron'
+
+    def _generate_audit_hash(self, user_id, model, res_id, create_date, details):
+        """Generate SHA-256 hash for integrity verification.
+
+        Args:
+            user_id: UID of the user who performed the action.
+            model: Technical model name (e.g. ``res.partner``).
+            res_id: Database ID of the affected record.
+            create_date: ``datetime`` or ISO string of when the log entry was created.
+            details: JSON string with change details.
+        """
+        salt = _get_audit_salt(self.env)
+        # Use fixed format to avoid isoformat() microsecond inconsistency
+        if isinstance(create_date, datetime):
+            create_date_str = create_date.strftime('%Y-%m-%d %H:%M:%S')
+        elif create_date is None:
+            create_date_str = ''
+        else:
+            create_date_str = str(create_date)[:19]  # Truncate to seconds
+        hash_string = f"{user_id}|{model}|{res_id}|{create_date_str}|{details}|{salt}"
+        return hashlib.sha256(hash_string.encode('utf-8')).hexdigest()
+
+    def _get_record_display_name(self, record):
+        """Safely get display name of a record."""
+        try:
+            if hasattr(record, 'display_name') and record.display_name:
+                return record.display_name
+            if hasattr(record, 'name') and record.name:
+                return record.name
+            return f"ID: {record.id}"
+        except Exception:
+            return f"ID: {record.id if hasattr(record, 'id') else 'Unknown'}"
+
+    def _serialize_value(self, value):
+        """Serialize a field value to a JSON-compatible format."""
+        if value is False or value is None:
+            return None
+        if isinstance(value, models.BaseModel):
+            if len(value) == 1:
+                return {'id': value.id, 'name': self._get_record_display_name(value)}
+            return [{'id': r.id, 'name': self._get_record_display_name(r)} for r in value]
+        if isinstance(value, (datetime, date)):
+            return value.isoformat()
+        if isinstance(value, bytes):
+            return '<binary data>'
+        return value
+
+    def _create_audit_log(self, action_type, model_name, res_id, name, details_dict):
+        """Create an audit log entry with a SHA-256 integrity hash.
+
+        The hash is computed AFTER the ORM create so we use the actual
+        ``create_date`` stored in the database, guaranteeing that
+        ``_recompute_hash`` (and the integrity cron) always reproduce the
+        same value.
+        """
+        try:
+            details_json = json.dumps(details_dict, ensure_ascii=False, default=str)
+            user_id = self.env.uid or SUPERUSER_ID
+
+            # Step 1 — create the record without a hash first
+            record = self.env['audit.log'].sudo().create({
+                'user_id': user_id,
+                'name': name or f'{model_name},{res_id}',
+                'model_model': model_name,
+                'res_id': res_id,
+                'ip_address': self._get_ip_address(),
+                'action_type': action_type,
+                'details': details_json,
+                'hash': '',
+                'company_id': self.env.company.id if self.env.company else False,
+            })
+
+            # Step 2 — compute hash using the real create_date from the DB
+            audit_hash = self._generate_audit_hash(
+                user_id, model_name, res_id, record.create_date, details_json
+            )
+
+            # Step 3 — write hash using context flag to bypass immutability check
+            record.with_context(_audit_hash_update=True).write({'hash': audit_hash})
+        except Exception as e:
+            _logger.critical("Failed to create audit log: %s", e)
+
+
+class BaseModelExtended(models.AbstractModel):
+    """
+    This model extends BaseModel behavior for auditing.
+    The actual hook is installed via monkey-patching in the module's __init__.py
+    """
+    _inherit = 'base'
+
+    def _audit_create(self, vals_list, rule):
+        """Log creation of records.
+
+        Only logs the fields that were explicitly provided in ``vals_list``
+        to avoid iterating over all model fields (which is very slow on
+        models with 100+ fields).
+        """
+        AuditHook = self.env['base.model.audit.hook']
+
+        for idx, record in enumerate(self):
+            details = {
+                'action': 'create',
+                'new_values': {},
+            }
+
+            # Use the original vals for this record instead of iterating all fields
+            vals = vals_list[idx] if idx < len(vals_list) else {}
+            for field_name in vals:
+                if field_name in ('id', 'create_uid', 'create_date', 'write_uid', 'write_date', '__last_update'):
+                    continue
+                if field_name not in record._fields:
+                    continue
+                try:
+                    field_value = record[field_name]
+                    serialized = AuditHook._serialize_value(field_value)
+                    if serialized is not None:
+                        details['new_values'][field_name] = serialized
+                except Exception:
+                    continue
+
+            AuditHook._create_audit_log(
+                'create',
+                self._name,
+                record.id,
+                AuditHook._get_record_display_name(record),
+                details
+            )
+
+    def _audit_write(self, vals, rule, old_values):
+        """Log modification of records."""
+        AuditHook = self.env['base.model.audit.hook']
+        monitored_fields = rule['field_names'] if isinstance(rule, dict) else rule.get_monitored_fields()
+
+        for record in self:
+            if record.id not in old_values:
+                continue
+
+            old_record_values = old_values[record.id]
+            changes = {}
+
+            for field_name in vals.keys():
+                # Skip system fields
+                if field_name in ('write_uid', 'write_date', '__last_update'):
+                    continue
+
+                # Check if we should monitor this field
+                if monitored_fields and field_name not in monitored_fields:
+                    continue
+
+                try:
+                    old_val = old_record_values.get(field_name)
+                    new_val = record[field_name]
+
+                    old_serialized = AuditHook._serialize_value(old_val)
+                    new_serialized = AuditHook._serialize_value(new_val)
+
+                    # Only log if value actually changed
+                    if old_serialized != new_serialized:
+                        changes[field_name] = {
+                            'old': old_serialized,
+                            'new': new_serialized,
+                        }
+                except Exception as e:
+                    _logger.debug("Could not compare field %s: %s", field_name, e)
+                    continue
+
+            # Only create log if there were actual changes
+            if changes:
+                details = {
+                    'action': 'write',
+                    'changes': changes,
+                }
+                AuditHook._create_audit_log(
+                    'write',
+                    self._name,
+                    record.id,
+                    AuditHook._get_record_display_name(record),
+                    details
+                )
+
+    def _audit_unlink(self, rule):
+        """Log deletion of records."""
+        AuditHook = self.env['base.model.audit.hook']
+
+        for record in self:
+            details = {
+                'action': 'unlink',
+                'deleted_record': {
+                    'id': record.id,
+                    'name': AuditHook._get_record_display_name(record),
+                },
+            }
+
+            # Capture key field values before deletion
+            deleted_values = {}
+            for field_name in ('name', 'code', 'ref', 'email', 'partner_id', 'product_id'):
+                if field_name in record._fields:
+                    try:
+                        val = record[field_name]
+                        serialized = AuditHook._serialize_value(val)
+                        if serialized is not None:
+                            deleted_values[field_name] = serialized
+                    except Exception:
+                        continue
+
+            if deleted_values:
+                details['key_values'] = deleted_values
+
+            AuditHook._create_audit_log(
+                'unlink',
+                self._name,
+                record.id,
+                AuditHook._get_record_display_name(record),
+                details
+            )
+
+
+def install_audit_hooks():
+    """
+    Install audit hooks on BaseModel methods.
+    This is called from the module's __init__.py
+    """
+    from odoo import models as odoo_models
+
+    # Guard against double-patching when the module is reloaded
+    if getattr(odoo_models.BaseModel, '_audit_sentinel_patched', False):
+        _logger.debug("Audit Security Sentinel: Hooks already installed, skipping")
+        return
+
+    # Invalidate the salt cache on (re)install so it is re-read from DB
+    invalidate_salt_cache()
+
+    global _original_create, _original_write, _original_unlink
+    _original_create = odoo_models.BaseModel.create
+    _original_write = odoo_models.BaseModel.write
+    _original_unlink = odoo_models.BaseModel.unlink
+
+    @api.model_create_multi
+    def _audited_create(self, vals_list):
+        """Wrapped create method with audit logging."""
+        # Skip audit for audit models themselves
+        if self._name in ('audit.log', 'audit.rule', 'base.model.audit.hook'):
+            return _original_create(self, vals_list)
+
+        # Check for active audit rule
+        try:
+            AuditHook = self.env['base.model.audit.hook']
+            rule = AuditHook._get_audit_rule(self._name)
+        except Exception:
+            return _original_create(self, vals_list)
+
+        if not rule or not rule['log_create']:
+            return _original_create(self, vals_list)
+
+        # Execute original create
+        records = _original_create(self, vals_list)
+
+        # Log creation — pass vals_list so only provided fields are logged
+        try:
+            records._audit_create(vals_list, rule)
+        except Exception as e:
+            _logger.error("Audit create failed for %s: %s", self._name, e)
+
+        return records
+
+    def _audited_write(self, vals):
+        """Wrapped write method with audit logging."""
+        # Skip audit for audit models themselves
+        if self._name in ('audit.log', 'audit.rule', 'base.model.audit.hook'):
+            return _original_write(self, vals)
+
+        # Check for active audit rule
+        try:
+            AuditHook = self.env['base.model.audit.hook']
+            rule = AuditHook._get_audit_rule(self._name)
+        except Exception:
+            return _original_write(self, vals)
+
+        if not rule or not rule['log_write']:
+            return _original_write(self, vals)
+
+        # Capture old values before write
+        old_values = {}
+        try:
+            monitored_fields = rule['field_names']
+            fields_to_read = list(vals.keys())
+            if monitored_fields:
+                fields_to_read = [f for f in fields_to_read if f in monitored_fields]
+
+            if fields_to_read:
+                for record in self:
+                    old_values[record.id] = {}
+                    for field_name in fields_to_read:
+                        if field_name in record._fields:
+                            try:
+                                old_values[record.id][field_name] = record[field_name]
+                            except Exception:
+                                continue
+        except Exception as e:
+            _logger.debug("Could not capture old values: %s", e)
+
+        # Execute original write
+        result = _original_write(self, vals)
+
+        # Log changes
+        try:
+            if old_values:
+                self._audit_write(vals, rule, old_values)
+        except Exception as e:
+            _logger.error("Audit write failed for %s: %s", self._name, e)
+
+        return result
+
+    def _audited_unlink(self):
+        """Wrapped unlink method with audit logging."""
+        # Skip audit for audit models themselves
+        if self._name in ('audit.log', 'audit.rule', 'base.model.audit.hook'):
+            return _original_unlink(self)
+
+        # Check for active audit rule
+        try:
+            AuditHook = self.env['base.model.audit.hook']
+            rule = AuditHook._get_audit_rule(self._name)
+        except Exception:
+            return _original_unlink(self)
+
+        if not rule or not rule['log_unlink']:
+            return _original_unlink(self)
+
+        # Log deletion before it happens
+        try:
+            self._audit_unlink(rule)
+        except Exception as e:
+            _logger.error("Audit unlink failed for %s: %s", self._name, e)
+
+        # Execute original unlink
+        return _original_unlink(self)
+
+    # Apply the monkey patches
+    odoo_models.BaseModel.create = _audited_create
+    odoo_models.BaseModel.write = _audited_write
+    odoo_models.BaseModel.unlink = _audited_unlink
+
+    # Mark BaseModel so we never double-patch
+    odoo_models.BaseModel._audit_sentinel_patched = True
+
+    _logger.info("Audit Security Sentinel: Hooks installed successfully")

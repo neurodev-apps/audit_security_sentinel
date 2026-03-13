@@ -1,0 +1,728 @@
+/* ========================================================================== */
+/* Audit Security Sentinel — Dashboard Styles                                */
+/* ========================================================================== */
+
+/* ---------- CSS Custom Properties ---------- */
+/* Scoped to .asd-dashboard to avoid polluting global Odoo CSS cascade */
+.asd-dashboard {
+    --asd-purple: #714B67;
+    --asd-purple-dark: #5a3b53;
+    --asd-purple-light: #8c6580;
+    --asd-success: #28a745;
+    --asd-warning: #ffc107;
+    --asd-danger: #dc3545;
+    --asd-info: #17a2b8;
+    --asd-bg: #f5f6f8;
+    --asd-card-bg: #ffffff;
+    --asd-card-radius: 10px;
+    --asd-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    --asd-shadow-hover: 0 8px 24px rgba(0, 0, 0, 0.1);
+    --asd-transition: 0.2s ease;
+}
+
+/* ---------- Dashboard Root ---------- */
+.asd-dashboard {
+    background-color: var(--asd-bg);
+    min-height: 100vh;
+    font-family: inherit;
+}
+
+/* ========================================================================== */
+/* HEADER                                                                      */
+/* ========================================================================== */
+.asd-header {
+    background: linear-gradient(135deg, var(--asd-purple) 0%, var(--asd-purple-dark) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+/* Range Buttons */
+.asd-range-group {
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.asd-range-btn {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.8rem;
+    padding: 0.25rem 0.65rem;
+    transition: all var(--asd-transition);
+}
+
+.asd-range-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.asd-range-active {
+    background: rgba(255, 255, 255, 0.95) !important;
+    color: var(--asd-purple) !important;
+    font-weight: 600;
+    border: 1px solid transparent;
+    font-size: 0.8rem;
+    padding: 0.25rem 0.65rem;
+}
+
+.asd-date-input {
+    width: 130px;
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.asd-date-input:focus {
+    background: rgba(255, 255, 255, 0.25);
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: none;
+}
+
+/* Chromium date input icon color fix */
+.asd-date-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+/* Auto-refresh Controls */
+.asd-auto-btn,
+.asd-auto-active {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    padding: 0;
+    font-size: 0.75rem;
+    transition: all var(--asd-transition);
+}
+
+.asd-auto-btn {
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.asd-auto-btn:hover {
+    background: rgba(255, 255, 255, 0.22);
+    color: #fff;
+}
+
+.asd-auto-active {
+    background: var(--asd-success);
+    color: #fff;
+    border: 1px solid var(--asd-success);
+}
+
+.asd-countdown {
+    color: rgba(255, 255, 255, 0.75);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    min-width: 55px;
+}
+
+.asd-refresh-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-size: 0.8rem;
+    transition: all var(--asd-transition);
+}
+
+.asd-refresh-btn:hover {
+    background: rgba(255, 255, 255, 0.28);
+    color: #fff;
+}
+
+.asd-action-btn {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    font-size: 0.85rem;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.asd-action-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+.asd-action-btn::after {
+    display: none; /* hide default caret */
+}
+
+/* ========================================================================== */
+/* LOADING                                                                     */
+/* ========================================================================== */
+.asd-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 0;
+}
+
+.asd-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(113, 75, 103, 0.15);
+    border-top-color: var(--asd-purple);
+    border-radius: 50%;
+    animation: asd-spin 0.8s linear infinite;
+}
+
+@keyframes asd-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* ========================================================================== */
+/* BODY                                                                        */
+/* ========================================================================== */
+.asd-body {
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+}
+
+/* ========================================================================== */
+/* KPI CARDS                                                                   */
+/* ========================================================================== */
+.asd-kpi-card {
+    background: var(--asd-card-bg);
+    border-radius: var(--asd-card-radius);
+    box-shadow: var(--asd-shadow);
+    padding: 1.25rem;
+    text-align: center;
+    transition: transform var(--asd-transition), box-shadow var(--asd-transition);
+    cursor: default;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.asd-kpi-card[onclick],
+.asd-kpi-card:not(:empty) {
+    cursor: pointer;
+}
+
+.asd-kpi-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--asd-shadow-hover);
+}
+
+.asd-kpi-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
+    font-size: 1.25rem;
+}
+
+.asd-kpi-icon-primary  { background: rgba(113, 75, 103, 0.1); color: var(--asd-purple); }
+.asd-kpi-icon-success  { background: rgba(40, 167, 69, 0.1);  color: var(--asd-success); }
+.asd-kpi-icon-warning  { background: rgba(255, 193, 7, 0.12); color: #e0a800; }
+.asd-kpi-icon-danger   { background: rgba(220, 53, 69, 0.1);  color: var(--asd-danger); }
+.asd-kpi-icon-info     { background: rgba(23, 162, 184, 0.1);  color: var(--asd-info); }
+.asd-kpi-icon-purple   { background: rgba(113, 75, 103, 0.1); color: var(--asd-purple); }
+
+.asd-kpi-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    margin-bottom: 0.25rem;
+    color: #2d2d2d;
+    font-variant-numeric: tabular-nums;
+}
+
+.asd-text-success { color: var(--asd-success) !important; }
+.asd-text-warning { color: #e0a800 !important; }
+.asd-text-danger  { color: var(--asd-danger) !important; }
+.asd-text-info    { color: var(--asd-info) !important; }
+
+.asd-kpi-label {
+    font-size: 0.78rem;
+    color: #8c8c8c;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+/* ========================================================================== */
+/* INTEGRITY BAR                                                               */
+/* ========================================================================== */
+.asd-integrity-bar {
+    border-radius: var(--asd-card-radius);
+    padding: 0.875rem 1.25rem;
+    box-shadow: var(--asd-shadow);
+}
+
+.asd-integrity-ok {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+}
+
+.asd-integrity-alert {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+}
+
+.asd-integrity-pulse {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.asd-pulse-ok {
+    background: var(--asd-success);
+    box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.5);
+    animation: asd-pulse-green 2s infinite;
+}
+
+.asd-pulse-alert {
+    background: var(--asd-danger);
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.5);
+    animation: asd-pulse-red 1.2s infinite;
+}
+
+@keyframes asd-pulse-green {
+    0%   { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.45); }
+    70%  { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+}
+
+@keyframes asd-pulse-red {
+    0%   { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.5); }
+    70%  { box-shadow: 0 0 0 12px rgba(220, 53, 69, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+}
+
+/* ========================================================================== */
+/* GENERIC CARDS                                                               */
+/* ========================================================================== */
+.asd-card {
+    background: var(--asd-card-bg);
+    border-radius: var(--asd-card-radius);
+    box-shadow: var(--asd-shadow);
+    overflow: hidden;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.asd-card-header {
+    padding: 0.875rem 1.25rem;
+    border-bottom: 1px solid #f0f0f0;
+    background: var(--asd-card-bg);
+}
+
+.asd-card-header h6 {
+    font-weight: 600;
+    color: #4a4a4a;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+}
+
+.asd-card-header h6 i {
+    color: var(--asd-purple);
+}
+
+.asd-card-body {
+    padding: 1.25rem;
+    flex: 1;
+    position: relative;
+}
+
+/* ========================================================================== */
+/* CHARTS                                                                      */
+/* ========================================================================== */
+.asd-chart-container {
+    position: relative;
+    width: 100%;
+}
+
+.asd-chart-lg {
+    height: 280px;
+}
+
+.asd-chart-md {
+    height: 260px;
+}
+
+.asd-chart-empty {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    z-index: 1;
+}
+
+.asd-chart-empty i {
+    opacity: 0.4;
+}
+
+.asd-chart-empty p {
+    font-size: 0.85rem;
+    margin: 0;
+}
+
+/* ========================================================================== */
+/* TOP USERS LIST                                                              */
+/* ========================================================================== */
+.asd-user-list-body {
+    padding: 0.75rem 1.25rem;
+    overflow-y: auto;
+    max-height: 320px;
+}
+
+.asd-user-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+}
+
+.asd-user-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.asd-user-rank {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: rgba(113, 75, 103, 0.08);
+    color: var(--asd-purple);
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.asd-user-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.asd-user-name {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: #3a3a3a;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 3px;
+}
+
+.asd-user-bar-wrapper {
+    height: 5px;
+    background: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.asd-user-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--asd-purple), var(--asd-purple-light));
+    border-radius: 3px;
+    transition: width 0.6s ease;
+}
+
+.asd-user-count {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--asd-purple);
+    min-width: 40px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ========================================================================== */
+/* TABLE                                                                       */
+/* ========================================================================== */
+.asd-table-wrapper {
+    overflow-x: auto;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar for the activity table */
+.asd-table-wrapper::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.asd-table-wrapper::-webkit-scrollbar-track {
+    background: #f8f8f8;
+}
+
+.asd-table-wrapper::-webkit-scrollbar-thumb {
+    background: #d0d0d0;
+    border-radius: 3px;
+}
+
+.asd-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #b0b0b0;
+}
+
+.asd-table {
+    font-size: 0.83rem;
+}
+
+.asd-table thead th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 0.5px;
+    color: #8c8c8c;
+    border-bottom: 1px solid #eee;
+    padding: 0.65rem 0.75rem;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: #fafafa;
+    z-index: 2;
+}
+
+.asd-table tbody td {
+    vertical-align: middle;
+    padding: 0.6rem 0.75rem;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.asd-log-row {
+    cursor: pointer;
+    transition: background-color var(--asd-transition);
+}
+
+.asd-log-row:hover {
+    background-color: rgba(113, 75, 103, 0.04) !important;
+}
+
+.asd-row-delete {
+    background-color: rgba(220, 53, 69, 0.03);
+}
+
+.asd-row-delete:hover {
+    background-color: rgba(220, 53, 69, 0.07) !important;
+}
+
+/* ========================================================================== */
+/* BADGES                                                                      */
+/* ========================================================================== */
+.asd-badge {
+    display: inline-block;
+    padding: 0.2em 0.6em;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    line-height: 1.4;
+}
+
+.asd-badge-success {
+    background: rgba(40, 167, 69, 0.12);
+    color: #1a7a33;
+}
+
+.asd-badge-warning {
+    background: rgba(255, 193, 7, 0.15);
+    color: #856404;
+}
+
+.asd-badge-danger {
+    background: rgba(220, 53, 69, 0.12);
+    color: #a71d2a;
+}
+
+.asd-badge-secondary {
+    background: rgba(108, 117, 125, 0.12);
+    color: #495057;
+}
+
+/* ========================================================================== */
+/* LOG DETAIL DIALOG                                                           */
+/* ========================================================================== */
+.asd-detail-dialog {
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.asd-diff-table-wrapper {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.asd-diff-table {
+    font-size: 0.82rem;
+}
+
+.asd-diff-table thead th {
+    background: #fafafa;
+    font-weight: 600;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    color: #8c8c8c;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid #eee;
+}
+
+.asd-diff-table tbody td {
+    padding: 0.5rem 0.75rem;
+    vertical-align: top;
+    border-bottom: 1px solid #f5f5f5;
+}
+
+.asd-diff-old {
+    background: rgba(220, 53, 69, 0.04);
+}
+
+.asd-diff-old pre {
+    color: var(--asd-danger);
+    font-size: 0.78rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.asd-diff-new {
+    background: rgba(40, 167, 69, 0.04);
+}
+
+.asd-diff-new pre {
+    color: #1a7a33;
+    font-size: 0.78rem;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+/* ========================================================================== */
+/* RESPONSIVE                                                                  */
+/* ========================================================================== */
+@media (max-width: 991.98px) {
+    .asd-kpi-value {
+        font-size: 1.6rem;
+    }
+
+    .asd-kpi-icon {
+        width: 42px;
+        height: 42px;
+        font-size: 1rem;
+    }
+
+    .asd-chart-lg {
+        height: 220px;
+    }
+
+    .asd-chart-md {
+        height: 200px;
+    }
+
+    .asd-header .row > [class*="col-"] {
+        text-align: center;
+    }
+
+    .asd-header .d-flex.justify-content-end {
+        justify-content: center !important;
+    }
+}
+
+@media (max-width: 767.98px) {
+    .asd-kpi-value {
+        font-size: 1.4rem;
+    }
+
+    .asd-kpi-label {
+        font-size: 0.7rem;
+    }
+
+    .asd-kpi-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .asd-chart-lg,
+    .asd-chart-md {
+        height: 180px;
+    }
+
+    .asd-range-group .btn {
+        font-size: 0.72rem;
+        padding: 0.2rem 0.45rem;
+    }
+
+    .asd-date-input {
+        width: 110px;
+        font-size: 0.72rem;
+    }
+
+    .asd-table {
+        font-size: 0.76rem;
+    }
+
+    .asd-user-list-body {
+        max-height: 250px;
+    }
+}
+
+/* ========================================================================== */
+/* FONT MONOSPACE UTILITY                                                      */
+/* ========================================================================== */
+.font-monospace {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+
+/* ========================================================================== */
+/* ANIMATE KPI VALUES                                                          */
+/* ========================================================================== */
+.asd-kpi-value {
+    animation: asd-fade-up 0.4s ease-out both;
+}
+
+@keyframes asd-fade-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger KPI card animations */
+.col-xxl-2:nth-child(1) .asd-kpi-value { animation-delay: 0s; }
+.col-xxl-2:nth-child(2) .asd-kpi-value { animation-delay: 0.05s; }
+.col-xxl-2:nth-child(3) .asd-kpi-value { animation-delay: 0.1s; }
+.col-xxl-2:nth-child(4) .asd-kpi-value { animation-delay: 0.15s; }
+.col-xxl-2:nth-child(5) .asd-kpi-value { animation-delay: 0.2s; }
+.col-xxl-2:nth-child(6) .asd-kpi-value { animation-delay: 0.25s; }

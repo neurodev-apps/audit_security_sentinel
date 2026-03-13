@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+
+    <!-- Module Category -->
+    <record id="module_category_security_sentinel" model="ir.module.category">
+        <field name="name">Security Sentinel</field>
+        <field name="sequence">200</field>
+    </record>
+
+    <!-- Privilege (shown as selector in User form) -->
+    <record id="res_groups_privilege_security_sentinel" model="res.groups.privilege">
+        <field name="name">Security Sentinel</field>
+        <field name="sequence">200</field>
+        <field name="category_id" ref="module_category_security_sentinel"/>
+    </record>
+
+    <!-- Audit User: read-only access to logs and dashboard -->
+    <record id="group_audit_user" model="res.groups">
+        <field name="name">Audit User</field>
+        <field name="sequence">10</field>
+        <field name="privilege_id" ref="res_groups_privilege_security_sentinel"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Read-only access to audit logs and the security dashboard.</field>
+    </record>
+
+    <!-- Compliance Officer: full access, inherits from Audit User -->
+    <record id="group_audit_manager" model="res.groups">
+        <field name="name">Compliance Officer</field>
+        <field name="sequence">20</field>
+        <field name="privilege_id" ref="res_groups_privilege_security_sentinel"/>
+        <field name="implied_ids" eval="[(4, ref('group_audit_user'))]"/>
+        <field name="comment">Full access: configure audit rules, view all logs and dashboard.</field>
+    </record>
+
+    <!-- Multi-company record rules: users only see logs from their accessible companies -->
+    <record id="rule_audit_log_company_user" model="ir.rule">
+        <field name="name">Audit Log: Company Access (Audit User)</field>
+        <field name="model_id" ref="model_audit_log"/>
+        <field name="domain_force">['|', ('company_id', '=', False), ('company_id', 'in', company_ids)]</field>
+        <field name="groups" eval="[(4, ref('audit_security_sentinel.group_audit_user'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+    <record id="rule_audit_log_company_manager" model="ir.rule">
+        <field name="name">Audit Log: Full Access (Compliance Officer)</field>
+        <field name="model_id" ref="model_audit_log"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('audit_security_sentinel.group_audit_manager'))]"/>
+        <field name="perm_read" eval="True"/>
+        <field name="perm_write" eval="False"/>
+        <field name="perm_create" eval="False"/>
+        <field name="perm_unlink" eval="False"/>
+    </record>
+
+</data>
+</odoo>
