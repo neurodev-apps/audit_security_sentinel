@@ -24,7 +24,7 @@ All audit logs are read-only and cannot be modified or deleted.
     'author': 'NeuroDev',
     'website': 'https://github.com/neurodev-apps',
     'license': 'OPL-1',
-    'price': 299.00,
+    'price': 149.00,
     'currency': 'USD',
     'images': ['static/description/banner.png'],
     'depends': [
