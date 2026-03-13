@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Wizard Form View -->
+    <record id="view_audit_report_wizard_form" model="ir.ui.view">
+        <field name="name">audit.report.wizard.form</field>
+        <field name="model">audit.report.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Compliance Report">
+                <group>
+                    <group string="Date Range" col="2">
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                    <group string="Export Options" col="2">
+                        <field name="export_format" widget="radio"/>
+                        <field name="include_details"/>
+                    </group>
+                </group>
+                <group string="Filters">
+                    <group col="2">
+                        <label for="include_creates" string="Action Types"/>
+                        <div class="d-flex gap-4">
+                            <field name="include_creates"/>
+                            <label for="include_creates" string="Creates"/>
+                            <field name="include_writes"/>
+                            <label for="include_writes" string="Writes"/>
+                            <field name="include_deletes"/>
+                            <label for="include_deletes" string="Deletes"/>
+                        </div>
+                    </group>
+                    <group col="2">
+                        <field name="model_ids" widget="many2many_tags"
+                               options="{'no_create': True}"
+                               placeholder="All models..."/>
+                        <field name="user_ids" widget="many2many_tags"
+                               options="{'no_create': True}"
+                               placeholder="All users..."/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="action_export_xlsx" string="Export Excel"
+                            type="object" class="btn-primary"
+                            invisible="export_format != 'xlsx'"
+                            icon="fa-file-excel-o"/>
+                    <button name="action_export_pdf" string="Export PDF"
+                            type="object" class="btn-primary"
+                            invisible="export_format != 'pdf'"
+                            icon="fa-file-pdf-o"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!-- Wizard Action -->
+    <record id="action_audit_report_wizard" model="ir.actions.act_window">
+        <field name="name">Compliance Report</field>
+        <field name="res_model">audit.report.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="groups_id" eval="[(4, ref('audit_security_sentinel.group_audit_user'))]"/>
+    </record>
+
+    <!-- Menu Item under Security Sentinel -->
+    <menuitem id="menu_audit_report_wizard"
+              name="Compliance Report"
+              parent="menu_audit_security_root"
+              action="action_audit_report_wizard"
+              groups="audit_security_sentinel.group_audit_user"
+              sequence="20"/>
+
+</odoo>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="res_config_settings_view_form_audit" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.audit.sentinel</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="base.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//form" position="inside">
+                <app name="audit_security_sentinel" string="Security Sentinel">
+                    <block title="Audit Log Settings" name="audit_log_settings">
+                        <setting
+                            string="Log Retention"
+                            help="Define how many days audit log records are kept before automatic purge.">
+                            <div class="content-group">
+                                <div class="row mt-2">
+                                    <label for="audit_retention_days" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_retention_days" class="col-lg-2"/>
+                                </div>
+                            </div>
+                        </setting>
+                        <setting
+                            string="Dashboard Refresh"
+                            help="How often (in seconds) the real-time dashboard auto-refreshes its data.">
+                            <div class="content-group">
+                                <div class="row mt-2">
+                                    <label for="audit_dashboard_refresh" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_dashboard_refresh" class="col-lg-2"/>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                    <block title="Integrity &amp; Cryptography" name="audit_integrity_settings">
+                        <setting
+                            string="Hash Salt Verification"
+                            help="Preview of the active cryptographic salt used for SHA-256 integrity hashes. The full salt is never displayed.">
+                            <div class="content-group">
+                                <div class="row mt-2">
+                                    <label for="audit_hash_salt_display" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_hash_salt_display" class="col-lg-4" readonly="1"/>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-lg-8">
+                                        <button
+                                            name="action_regenerate_salt"
+                                            type="object"
+                                            string="Regenerate Salt"
+                                            class="btn-secondary"
+                                            icon="fa-refresh"
+                                            groups="audit_security_sentinel.group_audit_manager"
+                                            confirm="This will invalidate ALL existing integrity hashes. Proceed?"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
+                </app>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="report_audit">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="wizard">
+                <t t-call="web.external_layout">
+                    <div class="page" style="font-family: 'Segoe UI', Arial, sans-serif;">
+
+                        <!-- ============================================ -->
+                        <!-- HEADER                                       -->
+                        <!-- ============================================ -->
+                        <div style="border-bottom: 3px solid #1B2A4A; padding-bottom: 12px; margin-bottom: 20px;">
+                            <div class="row">
+                                <div class="col-8">
+                                    <h1 style="color: #1B2A4A; margin: 0; font-size: 24px;">
+                                        Security Audit Report
+                                    </h1>
+                                    <p style="color: #666; margin: 4px 0 0 0; font-size: 13px;">
+                                        <t t-esc="data.get('company_name', '')"/>
+                                    </p>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <p style="margin: 0; font-size: 12px; color: #444;">
+                                        <strong>Period:</strong><br/>
+                                        <t t-esc="data.get('date_from', '')"/>
+                                        to
+                                        <t t-esc="data.get('date_to', '')"/>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- SUMMARY SECTION                              -->
+                        <!-- ============================================ -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #1B2A4A; border-bottom: 1px solid #ddd; padding-bottom: 6px;">
+                                Executive Summary
+                            </h3>
+                            <div class="row" style="margin-top: 12px;">
+                                <div class="col-4 text-center">
+                                    <div style="background: #f4f6f9; border-radius: 8px; padding: 16px;">
+                                        <p style="font-size: 28px; font-weight: bold; color: #1B2A4A; margin: 0;">
+                                            <t t-esc="data.get('summary', {}).get('total', 0)"/>
+                                        </p>
+                                        <p style="color: #888; margin: 4px 0 0 0; font-size: 12px;">
+                                            Total Audit Records
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div style="background: #f4f6f9; border-radius: 8px; padding: 16px;">
+                                        <p style="font-size: 28px; font-weight: bold; margin: 0;"
+                                           t-attf-style="color: #{data.get('integrity', {}).get('failed', 0) > 0 and '#CC0000' or '#006600'};">
+                                            <t t-esc="data.get('integrity', {}).get('passed', 0)"/>
+                                            /
+                                            <t t-esc="data.get('integrity', {}).get('total_checked', 0)"/>
+                                        </p>
+                                        <p style="color: #888; margin: 4px 0 0 0; font-size: 12px;">
+                                            Integrity Checks Passed
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="col-4 text-center">
+                                    <div t-attf-style="background: #{data.get('integrity', {}).get('failed', 0) > 0 and '#fff0f0' or '#f0fff0'}; border-radius: 8px; padding: 16px;">
+                                        <p style="font-size: 28px; font-weight: bold; margin: 0;"
+                                           t-attf-style="color: #{data.get('integrity', {}).get('failed', 0) > 0 and '#CC0000' or '#006600'};">
+                                            <t t-esc="data.get('integrity', {}).get('failed', 0)"/>
+                                        </p>
+                                        <p style="color: #888; margin: 4px 0 0 0; font-size: 12px;">
+                                            Tampered Records
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- BREAKDOWN BY ACTION TYPE                     -->
+                        <!-- ============================================ -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #1B2A4A; border-bottom: 1px solid #ddd; padding-bottom: 6px;">
+                                Breakdown by Action Type
+                            </h3>
+                            <table class="table table-sm table-bordered" style="font-size: 11px; margin-top: 8px;">
+                                <thead>
+                                    <tr style="background: #1B2A4A; color: white;">
+                                        <th style="padding: 6px 10px;">Action Type</th>
+                                        <th style="padding: 6px 10px; text-align: right;">Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data.get('summary', {}).get('by_action', {}).items()" t-as="item">
+                                        <tr>
+                                            <td style="padding: 4px 10px;">
+                                                <t t-esc="item[0]"/>
+                                            </td>
+                                            <td style="padding: 4px 10px; text-align: right;">
+                                                <t t-esc="item[1]"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- BREAKDOWN BY MODEL                           -->
+                        <!-- ============================================ -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #1B2A4A; border-bottom: 1px solid #ddd; padding-bottom: 6px;">
+                                Breakdown by Model
+                            </h3>
+                            <table class="table table-sm table-bordered" style="font-size: 11px; margin-top: 8px;">
+                                <thead>
+                                    <tr style="background: #1B2A4A; color: white;">
+                                        <th style="padding: 6px 10px;">Model</th>
+                                        <th style="padding: 6px 10px; text-align: right;">Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data.get('summary', {}).get('by_model', {}).items()" t-as="item">
+                                        <tr>
+                                            <td style="padding: 4px 10px;">
+                                                <t t-esc="item[0]"/>
+                                            </td>
+                                            <td style="padding: 4px 10px; text-align: right;">
+                                                <t t-esc="item[1]"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- BREAKDOWN BY USER                            -->
+                        <!-- ============================================ -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #1B2A4A; border-bottom: 1px solid #ddd; padding-bottom: 6px;">
+                                Breakdown by User
+                            </h3>
+                            <table class="table table-sm table-bordered" style="font-size: 11px; margin-top: 8px;">
+                                <thead>
+                                    <tr style="background: #1B2A4A; color: white;">
+                                        <th style="padding: 6px 10px;">User</th>
+                                        <th style="padding: 6px 10px; text-align: right;">Count</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data.get('summary', {}).get('by_user', {}).items()" t-as="item">
+                                        <tr>
+                                            <td style="padding: 4px 10px;">
+                                                <t t-esc="item[0]"/>
+                                            </td>
+                                            <td style="padding: 4px 10px; text-align: right;">
+                                                <t t-esc="item[1]"/>
+                                            </td>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- INTEGRITY VERIFICATION                       -->
+                        <!-- ============================================ -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #1B2A4A; border-bottom: 1px solid #ddd; padding-bottom: 6px;">
+                                Integrity Verification
+                            </h3>
+                            <t t-if="data.get('integrity', {}).get('failed', 0) == 0">
+                                <div style="background: #f0fff0; border: 1px solid #006600; border-radius: 6px; padding: 12px; margin-top: 8px;">
+                                    <p style="margin: 0; color: #006600; font-weight: bold;">
+                                        ALL RECORDS PASSED integrity verification
+                                    </p>
+                                    <p style="margin: 4px 0 0 0; color: #444; font-size: 11px;">
+                                        <t t-esc="data.get('integrity', {}).get('total_checked', 0)"/>
+                                        records verified. No evidence of tampering detected.
+                                    </p>
+                                </div>
+                            </t>
+                            <t t-else="">
+                                <div style="background: #fff0f0; border: 1px solid #CC0000; border-radius: 6px; padding: 12px; margin-top: 8px;">
+                                    <p style="margin: 0; color: #CC0000; font-weight: bold;">
+                                        INTEGRITY ALERT: <t t-esc="data.get('integrity', {}).get('failed', 0)"/>
+                                        tampered record(s) detected
+                                    </p>
+                                    <p style="margin: 4px 0 0 0; color: #444; font-size: 11px;">
+                                        Affected log IDs:
+                                        <t t-esc="', '.join(str(i) for i in data.get('integrity', {}).get('failed_ids', []))"/>
+                                    </p>
+                                    <p style="margin: 4px 0 0 0; color: #CC0000; font-size: 11px;">
+                                        Investigate immediately. These records may have been altered outside the system.
+                                    </p>
+                                </div>
+                            </t>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- RECENT ACTIVITY DETAIL                       -->
+                        <!-- ============================================ -->
+                        <div style="margin-bottom: 24px;">
+                            <h3 style="color: #1B2A4A; border-bottom: 1px solid #ddd; padding-bottom: 6px;">
+                                Activity Detail
+                                <t t-if="data.get('logs_truncated')">
+                                    <span style="font-size: 11px; color: #888; font-weight: normal;">
+                                        (showing 500 of <t t-esc="data.get('total_logs', 0)"/> records)
+                                    </span>
+                                </t>
+                            </h3>
+                            <table class="table table-sm table-bordered" style="font-size: 9px; margin-top: 8px;">
+                                <thead>
+                                    <tr style="background: #1B2A4A; color: white;">
+                                        <th style="padding: 4px 6px;">Date</th>
+                                        <th style="padding: 4px 6px;">User</th>
+                                        <th style="padding: 4px 6px;">Action</th>
+                                        <th style="padding: 4px 6px;">Model</th>
+                                        <th style="padding: 4px 6px;">Resource</th>
+                                        <th style="padding: 4px 6px;">ID</th>
+                                        <th style="padding: 4px 6px;">IP Address</th>
+                                        <t t-if="data.get('include_details')">
+                                            <th style="padding: 4px 6px;">Details</th>
+                                        </t>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <t t-foreach="data.get('logs', [])" t-as="log">
+                                        <tr>
+                                            <td style="padding: 3px 6px; white-space: nowrap;">
+                                                <t t-esc="log.get('create_date', '')"/>
+                                            </td>
+                                            <td style="padding: 3px 6px;">
+                                                <t t-esc="log.get('user', '')"/>
+                                            </td>
+                                            <td style="padding: 3px 6px;">
+                                                <t t-esc="log.get('action_type', '')"/>
+                                            </td>
+                                            <td style="padding: 3px 6px;">
+                                                <t t-esc="log.get('model', '')"/>
+                                            </td>
+                                            <td style="padding: 3px 6px;">
+                                                <t t-esc="log.get('name', '')"/>
+                                            </td>
+                                            <td style="padding: 3px 6px; text-align: right;">
+                                                <t t-esc="log.get('res_id', '')"/>
+                                            </td>
+                                            <td style="padding: 3px 6px;">
+                                                <t t-esc="log.get('ip_address', '')"/>
+                                            </td>
+                                            <t t-if="data.get('include_details')">
+                                                <td style="padding: 3px 6px; max-width: 250px; word-break: break-all; font-size: 8px;">
+                                                    <t t-esc="log.get('details', '')"/>
+                                                </td>
+                                            </t>
+                                        </tr>
+                                    </t>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- ============================================ -->
+                        <!-- FOOTER                                       -->
+                        <!-- ============================================ -->
+                        <div style="border-top: 2px solid #1B2A4A; padding-top: 8px; margin-top: 30px; text-align: center;">
+                            <p style="color: #888; font-size: 10px; margin: 0;">
+                                Generated by Security Sentinel — Confidential
+                            </p>
+                        </div>
+
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+
+</odoo>

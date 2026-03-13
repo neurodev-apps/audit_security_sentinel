@@ -1,0 +1,463 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates xml:space="preserve">
+
+    <!-- ================================================================== -->
+    <!-- Log Detail Dialog                                                   -->
+    <!-- ================================================================== -->
+    <t t-name="audit_security_sentinel.AuditLogDetailDialog">
+        <Dialog title="'Audit Log Detail'" size="'lg'">
+            <div class="asd-detail-dialog">
+                <!-- Header -->
+                <div class="d-flex align-items-center gap-3 mb-4 pb-3 border-bottom">
+                    <span t-att-class="actionClass + ' px-3 py-1'">
+                        <t t-esc="actionLabel"/>
+                    </span>
+                    <div>
+                        <div class="fw-bold"><t t-esc="props.log.model_model"/></div>
+                        <div class="text-muted small">
+                            ID: <t t-esc="props.log.res_id"/>
+                            <t t-if="props.log.name"> — <t t-esc="props.log.name"/></t>
+                        </div>
+                    </div>
+                    <div class="ms-auto text-end small text-muted">
+                        <div><i class="fa fa-user me-1"/><t t-esc="props.log.user_name || 'Unknown'"/></div>
+                        <div><i class="fa fa-globe me-1"/><t t-esc="props.log.ip_address || 'N/A'"/></div>
+                        <div><i class="fa fa-clock-o me-1"/><t t-esc="props.log.create_date"/></div>
+                    </div>
+                </div>
+
+                <!-- Changes Table -->
+                <t t-if="parsedChanges.length">
+                    <h6 class="text-muted text-uppercase small fw-bold mb-3">Field Changes</h6>
+                    <div class="asd-diff-table-wrapper">
+                        <table class="table table-sm asd-diff-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th style="width:25%">Field</th>
+                                    <th style="width:37.5%">Old Value</th>
+                                    <th style="width:37.5%">New Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <t t-foreach="parsedChanges" t-as="change" t-key="change_index">
+                                    <tr>
+                                        <td class="fw-semibold font-monospace small">
+                                            <t t-esc="change.field"/>
+                                        </td>
+                                        <td class="asd-diff-old">
+                                            <pre class="mb-0"><t t-esc="formatValue(change.old)"/></pre>
+                                        </td>
+                                        <td class="asd-diff-new">
+                                            <pre class="mb-0"><t t-esc="change.new !== undefined ? formatValue(change.new) : formatValue(change.old)"/></pre>
+                                        </td>
+                                    </tr>
+                                </t>
+                            </tbody>
+                        </table>
+                    </div>
+                </t>
+                <t t-else="">
+                    <div class="text-center text-muted py-4">
+                        <i class="fa fa-info-circle fa-2x mb-2 d-block"/>
+                        No detailed change data available for this entry.
+                    </div>
+                </t>
+            </div>
+            <t t-set-slot="footer">
+                <button class="btn btn-secondary" t-on-click="() => props.close()">Close</button>
+            </t>
+        </Dialog>
+    </t>
+
+    <!-- ================================================================== -->
+    <!-- Main Dashboard                                                      -->
+    <!-- ================================================================== -->
+    <t t-name="audit_security_sentinel.AuditDashboard">
+        <div class="asd-dashboard o_action">
+
+            <!-- ============================================================ -->
+            <!-- Header Bar                                                    -->
+            <!-- ============================================================ -->
+            <div class="asd-header">
+                <div class="container-fluid">
+                    <div class="row align-items-center py-3 px-2">
+                        <!-- Title -->
+                        <div class="col-lg-3 col-md-12 mb-2 mb-lg-0">
+                            <h4 class="mb-0 text-white d-flex align-items-center gap-2">
+                                <i class="fa fa-shield"/>
+                                <span>Security Sentinel</span>
+                            </h4>
+                        </div>
+                        <!-- Date Range Selector -->
+                        <div class="col-lg-5 col-md-7 mb-2 mb-lg-0">
+                            <div class="d-flex align-items-center gap-2 flex-wrap">
+                                <div class="btn-group asd-range-group" role="group">
+                                    <button t-att-class="'btn btn-sm ' + (state.rangeKey === 'today' ? 'asd-range-active' : 'asd-range-btn')"
+                                            t-on-click="() => this.setRange('today')">Today</button>
+                                    <button t-att-class="'btn btn-sm ' + (state.rangeKey === '7days' ? 'asd-range-active' : 'asd-range-btn')"
+                                            t-on-click="() => this.setRange('7days')">7 Days</button>
+                                    <button t-att-class="'btn btn-sm ' + (state.rangeKey === '30days' ? 'asd-range-active' : 'asd-range-btn')"
+                                            t-on-click="() => this.setRange('30days')">30 Days</button>
+                                    <button t-att-class="'btn btn-sm ' + (state.rangeKey === 'custom' ? 'asd-range-active' : 'asd-range-btn')"
+                                            t-on-click="() => this.setRange('custom')">Custom</button>
+                                </div>
+                                <t t-if="state.rangeKey === 'custom'">
+                                    <input type="date" class="form-control form-control-sm asd-date-input"
+                                           t-att-value="state.dateFrom"
+                                           t-on-change="onDateFromChange"/>
+                                    <span class="text-white-50 small">to</span>
+                                    <input type="date" class="form-control form-control-sm asd-date-input"
+                                           t-att-value="state.dateTo"
+                                           t-on-change="onDateToChange"/>
+                                </t>
+                            </div>
+                        </div>
+                        <!-- Auto-refresh + Refresh Button -->
+                        <div class="col-lg-4 col-md-5">
+                            <div class="d-flex align-items-center justify-content-end gap-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <button t-att-class="'btn btn-sm ' + (state.autoRefresh ? 'asd-auto-active' : 'asd-auto-btn')"
+                                            t-on-click="toggleAutoRefresh"
+                                            title="Toggle auto-refresh">
+                                        <i t-att-class="'fa ' + (state.autoRefresh ? 'fa-pause' : 'fa-play')"/>
+                                    </button>
+                                    <t t-if="state.autoRefresh">
+                                        <span class="asd-countdown" title="Time until next refresh">
+                                            <i class="fa fa-clock-o me-1"/>
+                                            <span t-ref="asd-countdown-text"><t t-esc="countdownDisplay"/></span>
+                                        </span>
+                                    </t>
+                                </div>
+                                <button class="btn btn-sm asd-refresh-btn" t-on-click="refreshData">
+                                    <i class="fa fa-refresh me-1"/>Refresh
+                                </button>
+                                <!-- Quick Actions -->
+                                <div class="dropdown">
+                                    <button class="btn btn-sm asd-action-btn dropdown-toggle" data-bs-toggle="dropdown">
+                                        <i class="fa fa-ellipsis-v"/>
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end">
+                                        <li><a class="dropdown-item" href="#" t-on-click.prevent="openAuditLogs">
+                                            <i class="fa fa-list me-2"/>View All Logs
+                                        </a></li>
+                                        <li><a class="dropdown-item" href="#" t-on-click.prevent="openAuditRules">
+                                            <i class="fa fa-cog me-2"/>Configure Rules
+                                        </a></li>
+                                        <li><hr class="dropdown-divider"/></li>
+                                        <li><a class="dropdown-item" href="#" t-on-click.prevent="openSettings">
+                                            <i class="fa fa-wrench me-2"/>Settings
+                                        </a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ============================================================ -->
+            <!-- Loading State                                                 -->
+            <!-- ============================================================ -->
+            <t t-if="state.isLoading">
+                <div class="asd-loading">
+                    <div class="asd-spinner"/>
+                    <p class="mt-3 text-muted">Loading security data...</p>
+                </div>
+            </t>
+
+            <!-- ============================================================ -->
+            <!-- Dashboard Body                                                -->
+            <!-- ============================================================ -->
+            <t t-else="">
+                <div class="container-fluid asd-body">
+
+                    <!-- Error State -->
+                    <t t-if="state.error">
+                        <div class="alert alert-danger mx-3 mt-3 d-flex align-items-center gap-2" role="alert">
+                            <i class="fa fa-exclamation-triangle fa-lg"/>
+                            <span><strong>Failed to load audit data:</strong> <t t-esc="state.error"/></span>
+                        </div>
+                    </t>
+
+                    <!-- ======================================================== -->
+                    <!-- KPI Cards Row                                             -->
+                    <!-- ======================================================== -->
+                    <div class="row g-3 mb-4">
+                        <!-- Total Logs -->
+                        <div class="col-xxl-2 col-lg-4 col-md-6">
+                            <div class="asd-kpi-card" t-on-click="openAuditLogs">
+                                <div class="asd-kpi-icon asd-kpi-icon-primary">
+                                    <i class="fa fa-list-alt"/>
+                                </div>
+                                <div class="asd-kpi-value" t-esc="state.totalLogs"/>
+                                <div class="asd-kpi-label">Total Events</div>
+                            </div>
+                        </div>
+                        <!-- Creates -->
+                        <div class="col-xxl-2 col-lg-4 col-md-6">
+                            <div class="asd-kpi-card">
+                                <div class="asd-kpi-icon asd-kpi-icon-success">
+                                    <i class="fa fa-plus-circle"/>
+                                </div>
+                                <div class="asd-kpi-value asd-text-success" t-esc="state.creates"/>
+                                <div class="asd-kpi-label">Creates</div>
+                            </div>
+                        </div>
+                        <!-- Updates -->
+                        <div class="col-xxl-2 col-lg-4 col-md-6">
+                            <div class="asd-kpi-card">
+                                <div class="asd-kpi-icon asd-kpi-icon-warning">
+                                    <i class="fa fa-pencil"/>
+                                </div>
+                                <div class="asd-kpi-value asd-text-warning" t-esc="state.writes"/>
+                                <div class="asd-kpi-label">Updates</div>
+                            </div>
+                        </div>
+                        <!-- Deletes -->
+                        <div class="col-xxl-2 col-lg-4 col-md-6">
+                            <div class="asd-kpi-card">
+                                <div class="asd-kpi-icon asd-kpi-icon-danger">
+                                    <i class="fa fa-trash"/>
+                                </div>
+                                <div class="asd-kpi-value asd-text-danger" t-esc="state.deletes"/>
+                                <div class="asd-kpi-label">Deletes</div>
+                            </div>
+                        </div>
+                        <!-- Unique Users -->
+                        <div class="col-xxl-2 col-lg-4 col-md-6">
+                            <div class="asd-kpi-card">
+                                <div class="asd-kpi-icon asd-kpi-icon-info">
+                                    <i class="fa fa-users"/>
+                                </div>
+                                <div class="asd-kpi-value asd-text-info" t-esc="state.uniqueUsers"/>
+                                <div class="asd-kpi-label">Active Users</div>
+                            </div>
+                        </div>
+                        <!-- Active Rules -->
+                        <div class="col-xxl-2 col-lg-4 col-md-6">
+                            <div class="asd-kpi-card" t-on-click="openAuditRules">
+                                <div class="asd-kpi-icon asd-kpi-icon-purple">
+                                    <i class="fa fa-cogs"/>
+                                </div>
+                                <div class="asd-kpi-value" t-esc="state.totalRules"/>
+                                <div class="asd-kpi-label">Active Rules</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ======================================================== -->
+                    <!-- Integrity Status Bar                                      -->
+                    <!-- ======================================================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <div t-att-class="'asd-integrity-bar ' + (integrityOk ? 'asd-integrity-ok' : 'asd-integrity-alert')">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div t-att-class="'asd-integrity-pulse ' + (integrityOk ? 'asd-pulse-ok' : 'asd-pulse-alert')"/>
+                                    <div>
+                                        <span class="fw-bold">
+                                            <t t-if="integrityOk">Integrity Verified</t>
+                                            <t t-else="">Integrity Alert</t>
+                                        </span>
+                                        <span class="ms-2 small opacity-75">
+                                            Last check: <t t-esc="state.integrityStatus.last_check"/>
+                                        </span>
+                                    </div>
+                                    <t t-if="!integrityOk">
+                                        <span class="asd-badge asd-badge-danger ms-auto">
+                                            <t t-esc="state.integrityStatus.tampered_count"/> tampered record(s)
+                                        </span>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ======================================================== -->
+                    <!-- Charts Row 1: Activity + Action Breakdown                 -->
+                    <!-- ======================================================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-lg-8">
+                            <div class="asd-card">
+                                <div class="asd-card-header">
+                                    <h6 class="mb-0"><i class="fa fa-line-chart me-2"/>Activity Over Time</h6>
+                                </div>
+                                <div class="asd-card-body">
+                                    <div class="asd-chart-container asd-chart-lg">
+                                        <canvas t-ref="activityChart"/>
+                                    </div>
+                                    <t t-if="!state.activityByHour.length">
+                                        <div class="asd-chart-empty">
+                                            <i class="fa fa-bar-chart fa-2x mb-2"/>
+                                            <p>No activity data for the selected period</p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="asd-card">
+                                <div class="asd-card-header">
+                                    <h6 class="mb-0"><i class="fa fa-pie-chart me-2"/>Action Breakdown</h6>
+                                </div>
+                                <div class="asd-card-body">
+                                    <div class="asd-chart-container asd-chart-lg">
+                                        <canvas t-ref="actionChart"/>
+                                    </div>
+                                    <t t-if="state.totalLogs === 0">
+                                        <div class="asd-chart-empty">
+                                            <i class="fa fa-pie-chart fa-2x mb-2"/>
+                                            <p>No data yet</p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ======================================================== -->
+                    <!-- Charts Row 2: Top Models + Top Users                      -->
+                    <!-- ======================================================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-lg-6">
+                            <div class="asd-card">
+                                <div class="asd-card-header">
+                                    <h6 class="mb-0"><i class="fa fa-database me-2"/>Top Monitored Models</h6>
+                                </div>
+                                <div class="asd-card-body">
+                                    <div class="asd-chart-container asd-chart-md">
+                                        <canvas t-ref="modelsChart"/>
+                                    </div>
+                                    <t t-if="!state.topModels.length">
+                                        <div class="asd-chart-empty">
+                                            <i class="fa fa-database fa-2x mb-2"/>
+                                            <p>No model data</p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="asd-card">
+                                <div class="asd-card-header">
+                                    <h6 class="mb-0"><i class="fa fa-user-circle me-2"/>Top Active Users</h6>
+                                </div>
+                                <div class="asd-card-body asd-user-list-body">
+                                    <t t-if="state.topUsers.length">
+                                        <div class="asd-user-list">
+                                            <t t-foreach="state.topUsers" t-as="usr" t-key="usr.user_id">
+                                                <div class="asd-user-row">
+                                                    <div class="asd-user-rank">
+                                                        <t t-esc="usr_index + 1"/>
+                                                    </div>
+                                                    <div class="asd-user-info">
+                                                        <div class="asd-user-name" t-esc="usr.user_name"/>
+                                                        <div class="asd-user-bar-wrapper">
+                                                            <div class="asd-user-bar"
+                                                                 t-att-style="'width:' + userBarWidth(usr.count) + '%'"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="asd-user-count" t-esc="usr.count"/>
+                                                </div>
+                                            </t>
+                                        </div>
+                                    </t>
+                                    <t t-else="">
+                                        <div class="asd-chart-empty">
+                                            <i class="fa fa-users fa-2x mb-2"/>
+                                            <p>No user data</p>
+                                        </div>
+                                    </t>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ======================================================== -->
+                    <!-- Recent Activity Table                                     -->
+                    <!-- ======================================================== -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-12">
+                            <div class="asd-card">
+                                <div class="asd-card-header d-flex align-items-center justify-content-between">
+                                    <h6 class="mb-0"><i class="fa fa-clock-o me-2"/>Recent Activity</h6>
+                                    <button class="btn btn-sm btn-outline-secondary" t-on-click="openAuditLogs">
+                                        View All <i class="fa fa-arrow-right ms-1"/>
+                                    </button>
+                                </div>
+                                <div class="asd-card-body p-0">
+                                    <div class="asd-table-wrapper">
+                                        <table class="table table-hover asd-table mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th>Date / Time</th>
+                                                    <th>User</th>
+                                                    <th>Action</th>
+                                                    <th>Model</th>
+                                                    <th>Resource</th>
+                                                    <th>IP Address</th>
+                                                    <th class="text-center" style="width:50px"/>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <t t-foreach="state.recentLogs" t-as="log" t-key="log.id">
+                                                    <tr class="asd-log-row"
+                                                        t-att-class="log.action_type === 'unlink' ? 'asd-row-delete' : ''">
+                                                        <td class="text-muted small text-nowrap">
+                                                            <t t-esc="formatDate(log.create_date)"/>
+                                                        </td>
+                                                        <td class="text-nowrap">
+                                                            <i class="fa fa-user-circle-o me-1 text-muted"/>
+                                                            <t t-esc="log.user_name"/>
+                                                        </td>
+                                                        <td>
+                                                            <span t-att-class="getActionTypeClass(log.action_type)">
+                                                                <t t-esc="getActionTypeLabel(log.action_type)"/>
+                                                            </span>
+                                                        </td>
+                                                        <td class="font-monospace small text-nowrap">
+                                                            <t t-esc="log.model_model"/>
+                                                        </td>
+                                                        <td class="text-truncate" style="max-width:200px">
+                                                            <t t-esc="log.name || '-'"/>
+                                                            <small class="text-muted ms-1">#<t t-esc="log.res_id"/></small>
+                                                        </td>
+                                                        <td class="font-monospace small text-muted">
+                                                            <t t-esc="log.ip_address || '-'"/>
+                                                        </td>
+                                                        <td class="text-center">
+                                                            <button class="btn btn-sm btn-link p-0 me-1"
+                                                                    t-on-click="() => this.openLogDetail(log)"
+                                                                    title="View change details">
+                                                                <i class="fa fa-eye"/>
+                                                            </button>
+                                                            <button class="btn btn-sm btn-link p-0"
+                                                                    t-on-click="() => this.openLogForm(log.id)"
+                                                                    title="Open full record">
+                                                                <i class="fa fa-external-link"/>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                                <t t-if="!state.recentLogs.length">
+                                                    <tr>
+                                                        <td colspan="7" class="text-center text-muted py-5">
+                                                            <i class="fa fa-inbox fa-3x mb-3 d-block opacity-25"/>
+                                                            <p class="mb-1 fw-semibold">No audit logs found</p>
+                                                            <small>Configure audit rules to start monitoring your system.</small>
+                                                        </td>
+                                                    </tr>
+                                                </t>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </t>
+        </div>
+    </t>
+
+</templates>

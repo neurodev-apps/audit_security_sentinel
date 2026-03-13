@@ -1,0 +1,1143 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* audit_security_sentinel
+#
+# Translators:
+# NeuroDev <neurodev.odoo@gmail.com>
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-03-11 00:00+0000\n"
+"PO-Revision-Date: 2026-03-11 00:00+0000\n"
+"Last-Translator: NeuroDev <neurodev.odoo@gmail.com>\n"
+"Language-Team: Spanish <https://github.com/neurodev-apps>\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#. module: audit_security_sentinel
+#: model:ir.module.module,name:audit_security_sentinel.module_audit_security_sentinel
+msgid "Odoo 17 Security Sentinel: Anti-Fraud & Audit Log"
+msgstr "Odoo 17 Security Sentinel: Anti-Fraude y Log de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.module.module,summary:audit_security_sentinel.module_audit_security_sentinel
+msgid "Immutable SHA-256 audit logging, real-time OWL dashboard, compliance reports, role-based security & automated integrity verification"
+msgstr "Registro de auditoria inmutable SHA-256, dashboard OWL en tiempo real, informes de cumplimiento, seguridad basada en roles y verificacion de integridad automatizada"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Model: audit.log
+#. -----------------------------------------------------------------------
+#: model:ir.model,name:audit_security_sentinel.model_audit_log
+msgid "Immutable Audit Log"
+msgstr "Log de Auditoria Inmutable"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__user_id
+msgid "User"
+msgstr "Usuario"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__name
+msgid "Resource Name"
+msgstr "Nombre del Recurso"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_log__name
+msgid "Name of the affected resource"
+msgstr "Nombre del recurso afectado"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__model_model
+msgid "Model"
+msgstr "Modelo"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_log__model_model
+msgid "Technical name of the model (e.g., res.partner)"
+msgstr "Nombre tecnico del modelo (ej., res.partner)"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__res_id
+msgid "Resource ID"
+msgstr "ID del Recurso"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_log__res_id
+msgid "Database ID of the affected record"
+msgstr "ID de base de datos del registro afectado"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__ip_address
+msgid "IP Address"
+msgstr "Direccion IP"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_log__ip_address
+msgid "IP address of the user who performed the action"
+msgstr "Direccion IP del usuario que realizo la accion"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__action_type
+msgid "Action Type"
+msgstr "Tipo de Accion"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields.selection,name:audit_security_sentinel.selection__audit_log__action_type__create
+msgid "Create"
+msgstr "Crear"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields.selection,name:audit_security_sentinel.selection__audit_log__action_type__write
+msgid "Write"
+msgstr "Modificar"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields.selection,name:audit_security_sentinel.selection__audit_log__action_type__unlink
+msgid "Delete"
+msgstr "Eliminar"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__details
+msgid "Change Details"
+msgstr "Detalle de Cambios"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_log__details
+msgid "JSON containing old and new values"
+msgstr "JSON con valores anteriores y nuevos"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_log__hash
+msgid "Integrity Hash"
+msgstr "Hash de Integridad"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_log__hash
+msgid "SHA-256 hash for integrity verification"
+msgstr "Hash SHA-256 para verificacion de integridad"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Model: audit.rule
+#. -----------------------------------------------------------------------
+#: model:ir.model,name:audit_security_sentinel.model_audit_rule
+msgid "Audit Rule Configuration"
+msgstr "Configuracion de Regla de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__name
+msgid "Rule Name"
+msgstr "Nombre de Regla"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__model_id
+msgid "Model to Monitor"
+msgstr "Modelo a Monitorear"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_rule__model_id
+msgid "Select the model you want to audit. System and transient models are excluded."
+msgstr "Seleccione el modelo que desea auditar. Los modelos de sistema y transitorios estan excluidos."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__active
+msgid "Active"
+msgstr "Activo"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_rule__active
+msgid "If unchecked, this rule will not be applied."
+msgstr "Si esta desmarcado, esta regla no se aplicara."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__log_create
+msgid "Log Creations"
+msgstr "Registrar Creaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_rule__log_create
+msgid "Log when new records are created."
+msgstr "Registrar cuando se crean nuevos registros."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__log_write
+msgid "Log Updates"
+msgstr "Registrar Modificaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_rule__log_write
+msgid "Log when records are modified."
+msgstr "Registrar cuando se modifican registros."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__log_unlink
+msgid "Log Deletions"
+msgstr "Registrar Eliminaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_rule__log_unlink
+msgid "Log when records are deleted."
+msgstr "Registrar cuando se eliminan registros."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_rule__log_field_ids
+msgid "Fields to Monitor"
+msgstr "Campos a Monitorear"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_rule__log_field_ids
+msgid "Select specific fields to monitor. Leave empty to monitor all stored fields."
+msgstr "Seleccione campos especificos a monitorear. Deje vacio para monitorear todos los campos almacenados."
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Model: res.config.settings
+#. -----------------------------------------------------------------------
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_res_config_settings__audit_retention_days
+msgid "Log Retention (Days)"
+msgstr "Retencion de Logs (Dias)"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_res_config_settings__audit_retention_days
+msgid "Number of days to keep audit log records. Logs older than this will be purged by the retention cron."
+msgstr "Numero de dias para conservar registros de auditoria. Los logs mas antiguos seran eliminados por el cron de retencion."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_res_config_settings__audit_hash_salt_display
+msgid "Current Hash Salt"
+msgstr "Salt de Hash Actual"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_res_config_settings__audit_hash_salt_display
+msgid "First 8 characters of the active hash salt, shown for verification purposes. The full salt is never exposed."
+msgstr "Primeros 8 caracteres del salt activo, mostrados con fines de verificacion. El salt completo nunca se expone."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_res_config_settings__audit_dashboard_refresh
+msgid "Dashboard Refresh Interval (s)"
+msgstr "Intervalo de Actualizacion del Dashboard (s)"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_res_config_settings__audit_dashboard_refresh
+msgid "Auto-refresh interval in seconds for the real-time audit dashboard."
+msgstr "Intervalo de actualizacion automatica en segundos para el dashboard de auditoria en tiempo real."
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Model: base.model.audit.hook
+#. -----------------------------------------------------------------------
+#: model:ir.model,name:audit_security_sentinel.model_base_model_audit_hook
+msgid "Audit Hook Mixin"
+msgstr "Mixin de Hook de Auditoria"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Python code strings (from _() calls)
+#. -----------------------------------------------------------------------
+#: code:addons/audit_security_sentinel/models/audit_log.py:0
+#, python-format
+msgid "Audit logs cannot be deleted. They are immutable for security purposes."
+msgstr "Los logs de auditoria no se pueden eliminar. Son inmutables por razones de seguridad."
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_log.py:0
+#, python-format
+msgid "Audit logs cannot be modified. They are immutable for security purposes."
+msgstr "Los logs de auditoria no se pueden modificar. Son inmutables por razones de seguridad."
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_rule.py:0
+#, python-format
+msgid "Audit Rule for %s"
+msgstr "Regla de Auditoria para %s"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_rule.py:0
+#, python-format
+msgid "New Audit Rule"
+msgstr "Nueva Regla de Auditoria"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_rule.py:0
+#, python-format
+msgid "Cannot create audit rules for the audit system itself."
+msgstr "No se pueden crear reglas de auditoria para el propio sistema de auditoria."
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_log.py:0
+#, python-format
+msgid "<p><b>⚠ Security Sentinel — Integrity Check</b></p><p>Verified <b>%(total)s</b> logs from the last 7 days.</p><p style='color:red;'><b>%(count)s tampered record(s) detected:</b> IDs %(ids)s</p><p>Investigate immediately.</p>"
+msgstr "<p><b>⚠ Security Sentinel — Verificacion de Integridad</b></p><p>Se verificaron <b>%(total)s</b> logs de los ultimos 7 dias.</p><p style='color:red;'><b>%(count)s registro(s) alterado(s) detectado(s):</b> IDs %(ids)s</p><p>Investigue inmediatamente.</p>"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_log.py:0
+#, python-format
+msgid "<p><b>✓ Security Sentinel — Integrity Check</b></p><p>Verified <b>%(total)s</b> logs from the last 7 days.</p><p style='color:green;'>All records passed integrity verification.</p>"
+msgstr "<p><b>✓ Security Sentinel — Verificacion de Integridad</b></p><p>Se verificaron <b>%(total)s</b> logs de los ultimos 7 dias.</p><p style='color:green;'>Todos los registros pasaron la verificacion de integridad.</p>"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_log.py:0
+#, python-format
+msgid "Security Sentinel: Integrity Report"
+msgstr "Security Sentinel: Informe de Integridad"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/audit_dashboard.py:0
+#, python-format
+msgid "Never"
+msgstr "Nunca"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/res_config_settings.py:0
+#, python-format
+msgid "Not configured"
+msgstr "No configurado"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/res_config_settings.py:0
+#, python-format
+msgid "Salt Regenerated"
+msgstr "Salt Regenerado"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/models/res_config_settings.py:0
+#, python-format
+msgid "A new hash salt has been generated. All previously computed integrity hashes are now invalid."
+msgstr "Se ha generado un nuevo salt de hash. Todos los hashes de integridad calculados anteriormente ahora son invalidos."
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. SQL Constraints
+#. -----------------------------------------------------------------------
+#: model:ir.model.constraint,message:audit_security_sentinel.constraint_audit_rule_unique_active_model
+msgid "Only one active audit rule per model is allowed!"
+msgstr "Solo se permite una regla de auditoria activa por modelo!"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Security groups & categories
+#. -----------------------------------------------------------------------
+#: model:ir.module.category,name:audit_security_sentinel.module_category_security_sentinel
+msgid "Security Sentinel"
+msgstr "Security Sentinel"
+
+#. module: audit_security_sentinel
+#: model:res.groups,name:audit_security_sentinel.group_audit_user
+msgid "Audit User"
+msgstr "Usuario de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:res.groups,comment:audit_security_sentinel.group_audit_user
+msgid "Read-only access to audit logs and the security dashboard."
+msgstr "Acceso de solo lectura a los logs de auditoria y al dashboard de seguridad."
+
+#. module: audit_security_sentinel
+#: model:res.groups,name:audit_security_sentinel.group_audit_manager
+msgid "Compliance Officer"
+msgstr "Oficial de Cumplimiento"
+
+#. module: audit_security_sentinel
+#: model:res.groups,comment:audit_security_sentinel.group_audit_manager
+msgid "Full access: configure audit rules, view all logs and dashboard."
+msgstr "Acceso completo: configurar reglas de auditoria, ver todos los logs y el dashboard."
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Cron jobs
+#. -----------------------------------------------------------------------
+#: model:ir.cron,name:audit_security_sentinel.ir_cron_verify_integrity
+msgid "Security Sentinel: Verify Log Integrity"
+msgstr "Security Sentinel: Verificar Integridad de Logs"
+
+#. module: audit_security_sentinel
+#: model:ir.cron,name:audit_security_sentinel.ir_cron_cleanup_old_logs
+msgid "Security Sentinel: Cleanup Old Audit Logs"
+msgstr "Security Sentinel: Limpieza de Logs Antiguos"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Menu items
+#. -----------------------------------------------------------------------
+#: model:ir.ui.menu,name:audit_security_sentinel.menu_audit_security_root
+msgid "Security Sentinel"
+msgstr "Security Sentinel"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.menu,name:audit_security_sentinel.menu_audit_dashboard
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.menu,name:audit_security_sentinel.menu_audit_logs
+msgid "Audit Logs"
+msgstr "Logs de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.menu,name:audit_security_sentinel.menu_audit_config
+msgid "Configuration"
+msgstr "Configuracion"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.menu,name:audit_security_sentinel.menu_audit_rules
+msgid "Audit Rules"
+msgstr "Reglas de Auditoria"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Action window names
+#. -----------------------------------------------------------------------
+#: model:ir.actions.act_window,name:audit_security_sentinel.action_audit_log
+msgid "Audit Logs"
+msgstr "Logs de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.actions.act_window,name:audit_security_sentinel.action_audit_rule
+msgid "Audit Rules"
+msgstr "Reglas de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.actions.client,name:audit_security_sentinel.action_audit_dashboard
+msgid "Security Dashboard"
+msgstr "Dashboard de Seguridad"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. View strings (from XML)
+#. -----------------------------------------------------------------------
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_tree
+msgid "Date"
+msgstr "Fecha"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Creates"
+msgstr "Creaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Updates"
+msgstr "Modificaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Deletes"
+msgstr "Eliminaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_form
+msgid "Action Information"
+msgstr "Informacion de la Accion"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_form
+msgid "Resource Information"
+msgstr "Informacion del Recurso"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_form
+msgid "Change Details"
+msgstr "Detalle de Cambios"
+
+#. module: audit_security_sentinel
+#: model:ir.actions.act_window,help:audit_security_sentinel.action_audit_log
+msgid "No audit logs found"
+msgstr "No se encontraron logs de auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.actions.act_window,help:audit_security_sentinel.action_audit_log
+msgid "Audit logs are automatically created when monitored actions are performed."
+msgstr "Los logs de auditoria se crean automaticamente cuando se realizan acciones monitoreadas."
+
+#. module: audit_security_sentinel
+#: model:ir.actions.act_window,help:audit_security_sentinel.action_audit_rule
+msgid "Create your first audit rule"
+msgstr "Cree su primera regla de auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.actions.act_window,help:audit_security_sentinel.action_audit_rule
+msgid "Define which models should be monitored for create, update, and delete operations. All changes will be recorded in the immutable audit log."
+msgstr "Defina que modelos deben ser monitoreados para operaciones de creacion, modificacion y eliminacion. Todos los cambios se registraran en el log de auditoria inmutable."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "Model Configuration"
+msgstr "Configuracion del Modelo"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "Actions to Monitor"
+msgstr "Acciones a Monitorear"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "Fields to Monitor (for Updates)"
+msgstr "Campos a Monitorear (para Modificaciones)"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "Leave empty to monitor all fields..."
+msgstr "Deje vacio para monitorear todos los campos..."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "Select specific fields to track changes. If empty, all stored fields will be monitored."
+msgstr "Seleccione campos especificos para rastrear cambios. Si esta vacio, se monitorearan todos los campos almacenados."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "View Logs"
+msgstr "Ver Logs"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_form
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_search
+msgid "Active"
+msgstr "Activo"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_search
+msgid "Archived"
+msgstr "Archivado"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_search
+msgid "Log Creates"
+msgstr "Registrar Creaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_search
+msgid "Log Updates"
+msgstr "Registrar Modificaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_search
+msgid "Log Deletes"
+msgstr "Registrar Eliminaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Search Audit Logs"
+msgstr "Buscar Logs de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_rule_search
+msgid "Search Audit Rules"
+msgstr "Buscar Reglas de Auditoria"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Settings view strings
+#. -----------------------------------------------------------------------
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Audit Log Settings"
+msgstr "Configuracion de Logs de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Log Retention"
+msgstr "Retencion de Logs"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Define how many days audit log records are kept before automatic purge."
+msgstr "Defina cuantos dias se conservan los registros de auditoria antes de la purga automatica."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Dashboard Refresh"
+msgstr "Actualizacion del Dashboard"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "How often (in seconds) the real-time dashboard auto-refreshes its data."
+msgstr "Con que frecuencia (en segundos) el dashboard en tiempo real actualiza sus datos automaticamente."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Integrity & Cryptography"
+msgstr "Integridad y Criptografia"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Hash Salt Verification"
+msgstr "Verificacion del Salt de Hash"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Preview of the active cryptographic salt used for SHA-256 integrity hashes. The full salt is never displayed."
+msgstr "Vista previa del salt criptografico activo utilizado para los hashes de integridad SHA-256. El salt completo nunca se muestra."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "Regenerate Salt"
+msgstr "Regenerar Salt"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.res_config_settings_view_form_audit
+msgid "This will invalidate ALL existing integrity hashes. Proceed?"
+msgstr "Esto invalidara TODOS los hashes de integridad existentes. Desea continuar?"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. OWL Dashboard template strings
+#. -----------------------------------------------------------------------
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Security Sentinel Dashboard"
+msgstr "Dashboard de Security Sentinel"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Refresh"
+msgstr "Actualizar"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Loading dashboard data..."
+msgstr "Cargando datos del dashboard..."
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Total Logs Today"
+msgstr "Total de Logs Hoy"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Active Users Today"
+msgstr "Usuarios Activos Hoy"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Creates Today"
+msgstr "Creaciones Hoy"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Deletes Today"
+msgstr "Eliminaciones Hoy"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Updates Today"
+msgstr "Modificaciones Hoy"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Quick Actions"
+msgstr "Acciones Rapidas"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "View All Logs"
+msgstr "Ver Todos los Logs"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Configure Rules"
+msgstr "Configurar Reglas"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Recent Activity (Last 10)"
+msgstr "Actividad Reciente (Ultimos 10)"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Date"
+msgstr "Fecha"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "User"
+msgstr "Usuario"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Action"
+msgstr "Accion"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Model"
+msgstr "Modelo"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "Resource"
+msgstr "Recurso"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "IP Address"
+msgstr "Direccion IP"
+
+#. module: audit_security_sentinel
+#: static/src/dashboard/audit_dashboard.xml:0
+msgid "No audit logs yet. Configure audit rules to start monitoring."
+msgstr "Aun no hay logs de auditoria. Configure reglas de auditoria para comenzar el monitoreo."
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Wizard strings (audit.report.wizard)
+#. -----------------------------------------------------------------------
+#: model:ir.model,name:audit_security_sentinel.model_audit_report_wizard
+msgid "Audit Report Wizard"
+msgstr "Asistente de Informe de Auditoria"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__date_from
+msgid "Date From"
+msgstr "Fecha Desde"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__date_to
+msgid "Date To"
+msgstr "Fecha Hasta"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__export_format
+msgid "Export Format"
+msgstr "Formato de Exportacion"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields.selection,name:audit_security_sentinel.selection__audit_report_wizard__export_format__pdf
+msgid "PDF Report"
+msgstr "Informe PDF"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields.selection,name:audit_security_sentinel.selection__audit_report_wizard__export_format__excel
+msgid "Excel Export"
+msgstr "Exportacion Excel"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__include_details
+msgid "Include change details"
+msgstr "Incluir detalle de cambios"
+
+#. module: audit_security_sentinel
+#: model:ir.actions.act_window,name:audit_security_sentinel.action_audit_report_wizard
+msgid "Compliance Report"
+msgstr "Informe de Cumplimiento"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Access control names (ir.model.access.csv)
+#. -----------------------------------------------------------------------
+#: model:ir.model.access,name:audit_security_sentinel.access_audit_log_user
+msgid "audit.log.user"
+msgstr "audit.log.usuario"
+
+#. module: audit_security_sentinel
+#: model:ir.model.access,name:audit_security_sentinel.access_audit_log_manager
+msgid "audit.log.manager"
+msgstr "audit.log.administrador"
+
+#. module: audit_security_sentinel
+#: model:ir.model.access,name:audit_security_sentinel.access_audit_rule_manager
+msgid "audit.rule.manager"
+msgstr "audit.rule.administrador"
+
+#. module: audit_security_sentinel
+#: model:ir.model.access,name:audit_security_sentinel.access_audit_report_wizard_manager
+msgid "audit.report.wizard.manager"
+msgstr "audit.report.wizard.administrador"
+
+#. module: audit_security_sentinel
+#: model:ir.model.access,name:audit_security_sentinel.access_audit_report_wizard_user
+msgid "audit.report.wizard.user"
+msgstr "audit.report.wizard.usuario"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Group-by labels (from search views)
+#. -----------------------------------------------------------------------
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "User"
+msgstr "Usuario"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Model"
+msgstr "Modelo"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Action Type"
+msgstr "Tipo de Accion"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_log_search
+msgid "Date"
+msgstr "Fecha"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Wizard: audit.report.wizard — additional field labels & Python strings
+#. -----------------------------------------------------------------------
+#: model:ir.model,description:audit_security_sentinel.model_audit_report_wizard
+msgid "Compliance Report Wizard"
+msgstr "Asistente de Informe de Cumplimiento"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__include_creates
+msgid "Include Creates"
+msgstr "Incluir Creaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__include_writes
+msgid "Include Writes"
+msgstr "Incluir Modificaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__include_deletes
+msgid "Include Deletes"
+msgstr "Incluir Eliminaciones"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__model_ids
+msgid "Models"
+msgstr "Modelos"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_report_wizard__model_ids
+msgid "Leave empty to include all models."
+msgstr "Deje vacio para incluir todos los modelos."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__user_ids
+msgid "Users"
+msgstr "Usuarios"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_report_wizard__user_ids
+msgid "Leave empty to include all users."
+msgstr "Deje vacio para incluir todos los usuarios."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,help:audit_security_sentinel.field_audit_report_wizard__include_details
+msgid "Include field-level change details. Increases file size significantly."
+msgstr "Incluir detalle de cambios a nivel de campo. Aumenta significativamente el tamano del archivo."
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__file_data
+msgid "File"
+msgstr "Archivo"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields,field_description:audit_security_sentinel.field_audit_report_wizard__file_name
+msgid "File Name"
+msgstr "Nombre del Archivo"
+
+#. module: audit_security_sentinel
+#: model:ir.model.fields.selection,name:audit_security_sentinel.selection__audit_report_wizard__export_format__xlsx
+msgid "Excel Export"
+msgstr "Exportacion Excel"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "You must select at least one action type to include in the report."
+msgstr "Debe seleccionar al menos un tipo de accion para incluir en el informe."
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "The xlsxwriter library is required for Excel export but is not installed."
+msgstr "La libreria xlsxwriter es necesaria para la exportacion Excel pero no esta instalada."
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Unknown"
+msgstr "Desconocido"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Summary"
+msgstr "Resumen"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Security Audit Report"
+msgstr "Informe de Auditoria de Seguridad"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Date Range:"
+msgstr "Rango de Fechas:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "From:"
+msgstr "Desde:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "To:"
+msgstr "Hasta:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Total Records:"
+msgstr "Total de Registros:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Breakdown by Action Type"
+msgstr "Desglose por Tipo de Accion"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Action Type"
+msgstr "Tipo de Accion"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Count"
+msgstr "Cantidad"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Breakdown by Model"
+msgstr "Desglose por Modelo"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Breakdown by User"
+msgstr "Desglose por Usuario"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Audit Logs"
+msgstr "Logs de Auditoria"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Resource Name"
+msgstr "Nombre del Recurso"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Resource ID"
+msgstr "ID del Recurso"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Details"
+msgstr "Detalles"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Integrity"
+msgstr "Integridad"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Hash Integrity Verification"
+msgstr "Verificacion de Integridad de Hash"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Total Records Checked:"
+msgstr "Total de Registros Verificados:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Passed:"
+msgstr "Aprobados:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Failed:"
+msgstr "Fallidos:"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Status"
+msgstr "Estado"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "INTEGRITY ALERT: Tampered records detected"
+msgstr "ALERTA DE INTEGRIDAD: Registros alterados detectados"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Tampered Record IDs"
+msgstr "IDs de Registros Alterados"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Log ID"
+msgstr "ID de Log"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "ALL RECORDS PASSED integrity verification"
+msgstr "TODOS LOS REGISTROS PASARON la verificacion de integridad"
+
+#. module: audit_security_sentinel
+#: code:addons/audit_security_sentinel/wizard/audit_report_wizard.py:0
+#, python-format
+msgid "Generated by Security Sentinel — Confidential"
+msgstr "Generado por Security Sentinel — Confidencial"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Wizard view strings (from XML)
+#. -----------------------------------------------------------------------
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Date Range"
+msgstr "Rango de Fechas"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Export Options"
+msgstr "Opciones de Exportacion"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Filters"
+msgstr "Filtros"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Action Types"
+msgstr "Tipos de Accion"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "All models..."
+msgstr "Todos los modelos..."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "All users..."
+msgstr "Todos los usuarios..."
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Export Excel"
+msgstr "Exportar Excel"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Export PDF"
+msgstr "Exportar PDF"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.view,arch_db:audit_security_sentinel.view_audit_report_wizard_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: audit_security_sentinel
+#: model:ir.ui.menu,name:audit_security_sentinel.menu_audit_report_wizard
+msgid "Compliance Report"
+msgstr "Informe de Cumplimiento"
+
+#. module: audit_security_sentinel
+#. -----------------------------------------------------------------------
+#. Report action and template strings
+#. -----------------------------------------------------------------------
+#: model:ir.actions.report,name:audit_security_sentinel.action_report_audit
+msgid "Security Audit Report"
+msgstr "Informe de Auditoria de Seguridad"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Executive Summary"
+msgstr "Resumen Ejecutivo"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Period:"
+msgstr "Periodo:"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Total Audit Records"
+msgstr "Total de Registros de Auditoria"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Integrity Checks Passed"
+msgstr "Verificaciones de Integridad Aprobadas"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Tampered Records"
+msgstr "Registros Alterados"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Integrity Verification"
+msgstr "Verificacion de Integridad"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "ALL RECORDS PASSED integrity verification"
+msgstr "TODOS LOS REGISTROS PASARON la verificacion de integridad"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "records verified. No evidence of tampering detected."
+msgstr "registros verificados. No se detecto evidencia de alteracion."
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "tampered record(s) detected"
+msgstr "registro(s) alterado(s) detectado(s)"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Affected log IDs:"
+msgstr "IDs de logs afectados:"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Investigate immediately. These records may have been altered outside the system."
+msgstr "Investigue inmediatamente. Estos registros pueden haber sido alterados fuera del sistema."
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Activity Detail"
+msgstr "Detalle de Actividad"
+
+#. module: audit_security_sentinel
+#: report:audit_security_sentinel.report_audit:0
+msgid "Generated by Security Sentinel — Confidential"
+msgstr "Generado por Security Sentinel — Confidencial"

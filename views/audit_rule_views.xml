@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Audit Rule Tree View -->
+    <record id="view_audit_rule_tree" model="ir.ui.view">
+        <field name="name">audit.rule.tree</field>
+        <field name="model">audit.rule</field>
+        <field name="arch" type="xml">
+            <tree string="Audit Rules" editable="bottom">
+                <field name="active" widget="boolean_toggle"/>
+                <field name="model_id"/>
+                <field name="log_create" widget="boolean_toggle"/>
+                <field name="log_write" widget="boolean_toggle"/>
+                <field name="log_unlink" widget="boolean_toggle"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Audit Rule Form View -->
+    <record id="view_audit_rule_form" model="ir.ui.view">
+        <field name="name">audit.rule.form</field>
+        <field name="model">audit.rule</field>
+        <field name="arch" type="xml">
+            <form string="Audit Rule">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_open_audit_logs" type="object"
+                                class="oe_stat_button" icon="fa-list-alt">
+                            <field name="log_count" widget="statinfo" string="Audit Logs"/>
+                        </button>
+                    </div>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Model Configuration">
+                            <field name="model_id" options="{'no_create': True}"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                        <group string="Actions to Monitor">
+                            <field name="log_create" widget="boolean_toggle"/>
+                            <field name="log_write" widget="boolean_toggle"/>
+                            <field name="log_unlink" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+                    <group string="Fields to Monitor (for Updates)">
+                        <field name="log_field_ids" widget="many2many_tags"
+                               options="{'no_create': True}"
+                               placeholder="Leave empty to monitor all fields..."/>
+                        <p class="text-muted">
+                            <i class="fa fa-info-circle"/>
+                            Select specific fields to track changes. If empty, all stored fields will be monitored.
+                        </p>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Audit Rule Search View -->
+    <record id="view_audit_rule_search" model="ir.ui.view">
+        <field name="name">audit.rule.search</field>
+        <field name="model">audit.rule</field>
+        <field name="arch" type="xml">
+            <search string="Search Audit Rules">
+                <field name="model_id"/>
+                <separator/>
+                <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
+                <separator/>
+                <filter string="Log Creates" name="filter_create" domain="[('log_create', '=', True)]"/>
+                <filter string="Log Updates" name="filter_write" domain="[('log_write', '=', True)]"/>
+                <filter string="Log Deletes" name="filter_unlink" domain="[('log_unlink', '=', True)]"/>
+            </search>
+        </field>
+    </record>
+
+    <!-- Audit Rule Action -->
+    <record id="action_audit_rule" model="ir.actions.act_window">
+        <field name="name">Audit Rules</field>
+        <field name="res_model">audit.rule</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="view_audit_rule_search"/>
+        <field name="context">{'search_default_filter_active': 1}</field>
+        <field name="groups_id" eval="[(4, ref('audit_security_sentinel.group_audit_manager'))]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Create your first audit rule
+            </p>
+            <p>
+                Define which models should be monitored for create, update, and delete operations.
+                All changes will be recorded in the immutable audit log.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Items for Rules -->
+    <menuitem id="menu_audit_config"
+              name="Configuration"
+              parent="menu_audit_security_root"
+              groups="audit_security_sentinel.group_audit_manager"
+              sequence="90"/>
+
+    <menuitem id="menu_audit_rules"
+              name="Audit Rules"
+              parent="menu_audit_config"
+              action="action_audit_rule"
+              sequence="10"/>
+
+</odoo>
