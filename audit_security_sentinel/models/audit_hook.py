@@ -209,31 +209,36 @@ class BaseModelAuditHook(models.AbstractModel):
         ``create_date`` stored in the database, guaranteeing that
         ``_recompute_hash`` (and the integrity cron) always reproduce the
         same value.
+
+        All DB operations run inside a savepoint so that a failure here
+        never leaves the cursor in InFailedSqlTransaction state — which
+        would corrupt the caller's business transaction.
         """
         try:
-            details_json = json.dumps(details_dict, ensure_ascii=False, default=str)
-            user_id = self.env.uid or SUPERUSER_ID
+            with self.env.cr.savepoint():
+                details_json = json.dumps(details_dict, ensure_ascii=False, default=str)
+                user_id = self.env.uid or SUPERUSER_ID
 
-            # Step 1 — create the record without a hash first
-            record = self.env['audit.log'].sudo().create({
-                'user_id': user_id,
-                'name': name or f'{model_name},{res_id}',
-                'model_model': model_name,
-                'res_id': res_id,
-                'ip_address': self._get_ip_address(),
-                'action_type': action_type,
-                'details': details_json,
-                'hash': '',
-                'company_id': self.env.company.id if self.env.company else False,
-            })
+                # Step 1 — create the record without a hash first
+                record = self.env['audit.log'].sudo().create({
+                    'user_id': user_id,
+                    'name': name or f'{model_name},{res_id}',
+                    'model_model': model_name,
+                    'res_id': res_id,
+                    'ip_address': self._get_ip_address(),
+                    'action_type': action_type,
+                    'details': details_json,
+                    'hash': '',
+                    'company_id': self.env.company.id if self.env.company else False,
+                })
 
-            # Step 2 — compute hash using the real create_date from the DB
-            audit_hash = self._generate_audit_hash(
-                user_id, model_name, res_id, record.create_date, details_json
-            )
+                # Step 2 — compute hash using the real create_date from the DB
+                audit_hash = self._generate_audit_hash(
+                    user_id, model_name, res_id, record.create_date, details_json
+                )
 
-            # Step 3 — write hash using context flag to bypass immutability check
-            record.with_context(_audit_hash_update=True).write({'hash': audit_hash})
+                # Step 3 — write hash using context flag to bypass immutability check
+                record.with_context(_audit_hash_update=True).write({'hash': audit_hash})
         except Exception as e:
             _logger.critical("Failed to create audit log: %s", e)
 
@@ -394,99 +399,121 @@ def install_audit_hooks():
 
     @api.model_create_multi
     def _audited_create(self, vals_list):
-        """Wrapped create method with audit logging."""
+        """Wrapped create method with audit logging.
+
+        Every audit SQL operation runs inside a cr.savepoint() so that
+        failures never leave the cursor in InFailedSqlTransaction state.
+        """
         # Skip audit for audit models themselves
         if self._name in ('audit.log', 'audit.rule', 'base.model.audit.hook'):
             return _original_create(self, vals_list)
 
-        # Check for active audit rule
+        # Check for active audit rule (savepoint-protected)
+        rule = None
         try:
-            AuditHook = self.env['base.model.audit.hook']
-            rule = AuditHook._get_audit_rule(self._name)
+            with self.env.cr.savepoint():
+                AuditHook = self.env['base.model.audit.hook']
+                rule = AuditHook._get_audit_rule(self._name)
         except Exception:
-            return _original_create(self, vals_list)
+            pass
 
-        if not rule or not rule['log_create']:
+        if not rule or not rule.get('log_create'):
             return _original_create(self, vals_list)
 
         # Execute original create
         records = _original_create(self, vals_list)
 
-        # Log creation — pass vals_list so only provided fields are logged
+        # Log creation (savepoint-protected)
         try:
-            records._audit_create(vals_list, rule)
+            with self.env.cr.savepoint():
+                records._audit_create(vals_list, rule)
         except Exception as e:
             _logger.error("Audit create failed for %s: %s", self._name, e)
 
         return records
 
     def _audited_write(self, vals):
-        """Wrapped write method with audit logging."""
+        """Wrapped write method with audit logging.
+
+        Every audit SQL operation runs inside a cr.savepoint() so that
+        failures never leave the cursor in InFailedSqlTransaction state.
+        """
         # Skip audit for audit models themselves
         if self._name in ('audit.log', 'audit.rule', 'base.model.audit.hook'):
             return _original_write(self, vals)
 
-        # Check for active audit rule
+        # Check for active audit rule (savepoint-protected)
+        rule = None
         try:
-            AuditHook = self.env['base.model.audit.hook']
-            rule = AuditHook._get_audit_rule(self._name)
+            with self.env.cr.savepoint():
+                AuditHook = self.env['base.model.audit.hook']
+                rule = AuditHook._get_audit_rule(self._name)
         except Exception:
+            pass
+
+        if not rule or not rule.get('log_write'):
             return _original_write(self, vals)
 
-        if not rule or not rule['log_write']:
-            return _original_write(self, vals)
-
-        # Capture old values before write
+        # Capture old values before write (savepoint-protected)
         old_values = {}
         try:
-            monitored_fields = rule['field_names']
-            fields_to_read = list(vals.keys())
-            if monitored_fields:
-                fields_to_read = [f for f in fields_to_read if f in monitored_fields]
+            with self.env.cr.savepoint():
+                monitored_fields = rule['field_names']
+                fields_to_read = list(vals.keys())
+                if monitored_fields:
+                    fields_to_read = [f for f in fields_to_read if f in monitored_fields]
 
-            if fields_to_read:
-                for record in self:
-                    old_values[record.id] = {}
-                    for field_name in fields_to_read:
-                        if field_name in record._fields:
-                            try:
-                                old_values[record.id][field_name] = record[field_name]
-                            except Exception:
-                                continue
+                if fields_to_read:
+                    for record in self:
+                        old_values[record.id] = {}
+                        for field_name in fields_to_read:
+                            if field_name in record._fields:
+                                try:
+                                    old_values[record.id][field_name] = record[field_name]
+                                except Exception:
+                                    continue
         except Exception as e:
             _logger.debug("Could not capture old values: %s", e)
 
         # Execute original write
         result = _original_write(self, vals)
 
-        # Log changes
+        # Log changes (savepoint-protected)
         try:
-            if old_values:
-                self._audit_write(vals, rule, old_values)
+            with self.env.cr.savepoint():
+                if old_values:
+                    self._audit_write(vals, rule, old_values)
         except Exception as e:
             _logger.error("Audit write failed for %s: %s", self._name, e)
 
         return result
 
     def _audited_unlink(self):
-        """Wrapped unlink method with audit logging."""
+        """Wrapped unlink method with audit logging.
+
+        Every audit SQL operation runs inside a cr.savepoint() so that
+        failures never leave the cursor in InFailedSqlTransaction state.
+        """
         # Skip audit for audit models themselves
         if self._name in ('audit.log', 'audit.rule', 'base.model.audit.hook'):
             return _original_unlink(self)
 
-        # Check for active audit rule
+        # Check for active audit rule (savepoint-protected)
+        rule = None
         try:
-            AuditHook = self.env['base.model.audit.hook']
-            rule = AuditHook._get_audit_rule(self._name)
+            with self.env.cr.savepoint():
+                AuditHook = self.env['base.model.audit.hook']
+                rule = AuditHook._get_audit_rule(self._name)
         except Exception:
+            pass
+
+        if not rule or not rule.get('log_unlink'):
             return _original_unlink(self)
 
-        if not rule or not rule['log_unlink']:
-            return _original_unlink(self)
-
-        # Log deletion before it happens
+        # Log deletion before it happens (savepoint-protected)
         try:
-            self._audit_unlink(rule)
+            with self.env.cr.savepoint():
+                self._audit_unlink(rule)
         except Exception as e:
             _logger.error("Audit unlink failed for %s: %s", self._name, e)
 

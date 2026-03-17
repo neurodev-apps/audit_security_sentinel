@@ -6,7 +6,6 @@
         <field name="name">Security Dashboard</field>
         <field name="tag">audit_security_sentinel.dashboard</field>
         <field name="target">main</field>
-        <field name="groups_id" eval="[(4, ref('audit_security_sentinel.group_audit_user'))]"/>
     </record>
 
     <!-- Dashboard Menu Item (First in the list) -->

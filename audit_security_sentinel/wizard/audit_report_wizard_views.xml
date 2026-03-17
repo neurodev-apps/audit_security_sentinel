@@ -59,7 +59,6 @@
         <field name="res_model">audit.report.wizard</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
-        <field name="groups_id" eval="[(4, ref('audit_security_sentinel.group_audit_user'))]"/>
     </record>
 
     <!-- Menu Item under Security Sentinel -->

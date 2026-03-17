@@ -86,7 +86,6 @@
         <field name="view_mode">list,form</field>
         <field name="search_view_id" ref="view_audit_log_search"/>
         <field name="context">{}</field>
-        <field name="groups_id" eval="[(4, ref('audit_security_sentinel.group_audit_user'))]"/>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 No audit logs found
