@@ -22,7 +22,7 @@ Enterprise-grade security module for Odoo 19:
 All audit logs are read-only and cannot be modified or deleted.
     """,
     'author': 'NeuroDev',
-    'website': 'https://github.com/neurodev-apps',
+    'website': 'https://neurodev.cl',
     'support': 'contacto@neurodev.cl',
     'license': 'OPL-1',
     'price': 149.00,
