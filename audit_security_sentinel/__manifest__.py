@@ -25,7 +25,7 @@ All audit logs are read-only and cannot be modified or deleted.
     'website': 'https://neurodev.cl',
     'support': 'contacto@neurodev.cl',
     'license': 'OPL-1',
-    'price': 149.00,
+    'price': 249.00,
     'currency': 'USD',
     'images': ['static/description/banner.png'],
     'depends': [
