@@ -1,443 +1,645 @@
 <!-- ============================================================
-     Security Sentinel — Odoo Apps Store Listing
-     Author: NeuroDev | https://github.com/neurodev-apps
+     Security Sentinel — Odoo Apps Store Listing (Bilingüe ES + EN)
+     Author: NeuroDev | https://neurodev.cl | contacto@neurodev.cl
+     Last update: 2026-05-10
      ============================================================ -->
 
-<!-- ==================== HERO SECTION ==================== -->
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_slogan" style="margin-bottom: 0; padding: 40px 20px;">
-            <h2 style="color: #714B67; font-weight: 800; font-size: 2.4em; margin-bottom: 10px;">
-                Security Sentinel
-            </h2>
-            <h3 style="color: #555; font-weight: 400; font-size: 1.4em; margin-bottom: 15px;">
-                Anti-Fraud &amp; Immutable Audit Log for Odoo 19
-            </h3>
-            <p style="font-size: 1.15em; color: #666; max-width: 750px; margin: 0 auto 20px auto; line-height: 1.7;">
-                Enterprise-grade security monitoring that seals every create, update, and delete
-                with SHA-256 cryptographic hashing. Real-time OWL dashboard, compliance reports,
-                automated integrity verification, and role-based access control &mdash;
-                everything you need to protect your Odoo data and prove it.
-            </p>
-            <div style="margin-top: 25px;">
-                <span style="display: inline-block; background: #714B67; color: #fff; padding: 8px 20px; border-radius: 5px; font-size: 0.95em; margin: 4px;">
-                    Odoo 19 Compatible
-                </span>
-                <span style="display: inline-block; background: #F0C040; color: #333; padding: 8px 20px; border-radius: 5px; font-size: 0.95em; margin: 4px; font-weight: 600;">
-                    OWL Framework
-                </span>
-                <span style="display: inline-block; background: #e8e8e8; color: #333; padding: 8px 20px; border-radius: 5px; font-size: 0.95em; margin: 4px;">
-                    SHA-256 Integrity
-                </span>
-            </div>
-        </div>
-    </div>
-</section>
+<section style="font-family: 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #2c2c2c; max-width: 1200px; margin: 0 auto;">
 
-<!-- ==================== THE PROBLEM ==================== -->
-<section class="oe_container oe_dark">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #333; font-weight: 700;">Why You Need This</h3>
-        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center;">
+<!-- =================================================================== -->
+<!-- ====================== 🇨🇱 ESPAÑOL =============================== -->
+<!-- =================================================================== -->
 
-                <div style="flex: 1; min-width: 240px; max-width: 360px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #dc3545;">
-                    <h5 style="color: #dc3545; margin-bottom: 10px;">
-                        <i class="fa fa-exclamation-triangle"></i> No Native Audit Trail
-                    </h5>
-                    <p style="color: #666; font-size: 0.95em; margin: 0;">
-                        Odoo's built-in logging is limited. There is no out-of-the-box mechanism to track
-                        who changed what, when, and from which IP address &mdash; let alone prove that
-                        the log itself was not tampered with.
-                    </p>
-                </div>
+<!-- ==================== HERO ==================== -->
+<div style="background: linear-gradient(135deg, #0A1628 0%, #1E3A5F 100%); color: #fff; padding: 50px 30px; border-radius: 12px; margin-bottom: 30px; text-align: center;">
+  <h1 style="color: #00E5FF; font-size: 2.5em; margin: 0 0 12px 0; font-weight: 800;">
+    Security Sentinel
+  </h1>
+  <p style="color: #fff; font-size: 1.4em; margin: 0 0 18px 0; font-weight: 600;">
+    Si alguien tocó tu data, el log lo recuerda. Y nadie puede borrarlo.
+  </p>
+  <p style="color: #B8C5D6; font-size: 1.1em; max-width: 760px; margin: 0 auto;">
+    Bitácora forense de cada cambio en tu Odoo, sellada con SHA-256.
+    Quién, cuándo, desde qué IP, valor antes y valor después. Imborrable.
+    Imprescindible para auditorías y cumplimiento legal.
+  </p>
+</div>
 
-                <div style="flex: 1; min-width: 240px; max-width: 360px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #fd7e14;">
-                    <h5 style="color: #fd7e14; margin-bottom: 10px;">
-                        <i class="fa fa-eye-slash"></i> Invisible Data Manipulation
-                    </h5>
-                    <p style="color: #666; font-size: 0.95em; margin: 0;">
-                        A user with the right permissions can modify prices, delete records, or alter
-                        financial data without leaving a visible trace. By the time you notice,
-                        the damage is done.
-                    </p>
-                </div>
+<!-- ==================== EL PROBLEMA ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 40px; text-align: center;">
+  Por qué tu Odoo es vulnerable hoy
+</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin: 30px 0;">
 
-                <div style="flex: 1; min-width: 240px; max-width: 360px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #714B67;">
-                    <h5 style="color: #714B67; margin-bottom: 10px;">
-                        <i class="fa fa-gavel"></i> Compliance Requirements
-                    </h5>
-                    <p style="color: #666; font-size: 0.95em; margin: 0;">
-                        ISO 27001, SOX, GDPR, and industry regulations demand immutable audit
-                        trails with integrity proof. Manual spreadsheets and ad-hoc reports
-                        are not enough for auditors.
-                    </p>
-                </div>
+  <div style="flex: 1; min-width: 260px; max-width: 340px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #dc3545; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="color: #dc3545; margin: 0 0 10px 0; font-size: 2.2em;">0</h4>
+    <p style="color: #444; margin: 0; font-size: 0.95em;">
+      <b>Logs inmutables en Odoo nativo.</b> El logging por defecto puede ser modificado
+      o desactivado. No hay forma de probar que el registro no fue alterado.
+    </p>
+  </div>
 
-            </div>
-        </div>
-    </div>
-</section>
+  <div style="flex: 1; min-width: 260px; max-width: 340px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #fd7e14; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="color: #fd7e14; margin: 0 0 10px 0; font-size: 2.2em;">12 meses</h4>
+    <p style="color: #444; margin: 0; font-size: 0.95em;">
+      <b>Tiempo promedio para detectar un fraude interno</b> en empresas sin audit log
+      forense (IBM Cost of a Data Breach 2024). Si te enteras tarde, ya es tarde.
+    </p>
+  </div>
 
-<!-- ==================== KEY FEATURES ==================== -->
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #714B67; font-weight: 700;">Key Features</h3>
+  <div style="flex: 1; min-width: 260px; max-width: 340px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #714B67; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="color: #714B67; margin: 0 0 10px 0; font-size: 2.2em;">2 años</h4>
+    <p style="color: #444; margin: 0; font-size: 0.95em;">
+      <b>Retención mínima exigida</b> por la Ley 21.663 chilena y por ISO 27001.
+      Sin log forense, no puedes demostrar conformidad. Sin demostración, hay multa.
+    </p>
+  </div>
 
-        <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; padding: 0 20px;">
+</div>
 
-            <!-- Feature 1: Dashboard -->
-            <div style="flex: 1; min-width: 300px; max-width: 350px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #714B67, #5A3D54); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-tachometer" style="font-size: 28px; color: #fff;"></i>
-                </div>
-                <h4 style="color: #333; font-weight: 600; margin-bottom: 10px;">Real-Time OWL Dashboard</h4>
-                <p style="color: #666; font-size: 0.95em; line-height: 1.6;">
-                    Live KPIs, activity-by-hour charts, top monitored models, user activity ranking,
-                    and integrity status &mdash; all in a single, blazing-fast OWL component.
-                    No page reloads required.
-                </p>
-            </div>
+<!-- ==================== CASOS REALES DETECTADOS ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 45px; text-align: center;">
+  Lo que detecta — escenarios reales
+</h2>
+<p style="text-align: center; color: #666; max-width: 720px; margin: 0 auto 30px auto;">
+  Cada CREATE, WRITE y DELETE en los modelos que vos elijas, registrado con quién,
+  cuándo, desde qué IP, valor antes y valor después. Ejemplos típicos:
+</p>
 
-            <!-- Feature 2: SHA-256 -->
-            <div style="flex: 1; min-width: 300px; max-width: 350px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #714B67, #5A3D54); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-lock" style="font-size: 28px; color: #fff;"></i>
-                </div>
-                <h4 style="color: #333; font-weight: 600; margin-bottom: 10px;">SHA-256 Immutable Logging</h4>
-                <p style="color: #666; font-size: 0.95em; line-height: 1.6;">
-                    Every log entry is sealed with a SHA-256 hash using a secret cryptographic salt.
-                    Logs cannot be edited or deleted through the ORM. Any tampering attempt
-                    is detected automatically.
-                </p>
-            </div>
+<div style="max-width: 900px; margin: 0 auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
 
-            <!-- Feature 3: Integrity Verification -->
-            <div style="flex: 1; min-width: 300px; max-width: 350px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #714B67, #5A3D54); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-check-circle" style="font-size: 28px; color: #fff;"></i>
-                </div>
-                <h4 style="color: #333; font-weight: 600; margin-bottom: 10px;">Automated Integrity Verification</h4>
-                <p style="color: #666; font-size: 0.95em; line-height: 1.6;">
-                    A weekly scheduled action recalculates hashes for all recent logs and compares
-                    against stored values. Compliance Officers are notified instantly if any
-                    record has been tampered with.
-                </p>
-            </div>
+    <tr style="border-bottom: 1px solid #e8e8e8;">
+      <td style="padding: 14px; vertical-align: top; width: 70px;">
+        <span style="background: #dc2626; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">CRÍTICO</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Borrado de factura aprobada</b>: "Una factura validada fue eliminada por un usuario con permisos elevados un viernes a las 18:30"
+      </td>
+    </tr>
 
-            <!-- Feature 4: Compliance Reports -->
-            <div style="flex: 1; min-width: 300px; max-width: 350px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #714B67, #5A3D54); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-file-pdf-o" style="font-size: 28px; color: #fff;"></i>
-                </div>
-                <h4 style="color: #333; font-weight: 600; margin-bottom: 10px;">Compliance Reports (PDF/Excel)</h4>
-                <p style="color: #666; font-size: 0.95em; line-height: 1.6;">
-                    Generate detailed audit reports filtered by date range, with full change history.
-                    Export to PDF for auditors or Excel for analysis. One-click reporting wizard
-                    built into the module.
-                </p>
-            </div>
+    <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">ALTO</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Cambio de precio sospechoso</b>: "El precio de un producto fue modificado 5 veces en 2 horas desde 3 direcciones IP distintas"
+      </td>
+    </tr>
 
-            <!-- Feature 5: Configurable Rules -->
-            <div style="flex: 1; min-width: 300px; max-width: 350px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #714B67, #5A3D54); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-cogs" style="font-size: 28px; color: #fff;"></i>
-                </div>
-                <h4 style="color: #333; font-weight: 600; margin-bottom: 10px;">Configurable Audit Rules</h4>
-                <p style="color: #666; font-size: 0.95em; line-height: 1.6;">
-                    Choose exactly which models and fields to monitor. Enable or disable
-                    create, write, and delete tracking per model. Focus on what matters
-                    and reduce noise.
-                </p>
-            </div>
+    <tr style="border-bottom: 1px solid #e8e8e8;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">ALTO</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Modificación de asiento contable cerrado</b>: "Un asiento contable cerrado fue modificado 30 días después de su creación"
+      </td>
+    </tr>
 
-            <!-- Feature 6: RBAC -->
-            <div style="flex: 1; min-width: 300px; max-width: 350px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, #714B67, #5A3D54); margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fa fa-users" style="font-size: 28px; color: #fff;"></i>
-                </div>
-                <h4 style="color: #333; font-weight: 600; margin-bottom: 10px;">Role-Based Access Control</h4>
-                <p style="color: #666; font-size: 0.95em; line-height: 1.6;">
-                    Two built-in security groups: <b>Audit User</b> for read-only log access, and
-                    <b>Compliance Officer</b> for full configuration and reporting.
-                    Separation of duties enforced from day one.
-                </p>
-            </div>
+    <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #dc2626; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">CRÍTICO</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Acceso fuera de horario</b>: "Inicio de sesión a las 03:42 desde IP no habitual con modificación de datos bancarios de proveedores"
+      </td>
+    </tr>
 
-        </div>
-    </div>
-</section>
+    <tr style="border-bottom: 1px solid #e8e8e8;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #facc15; color: #333; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">MEDIO</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Cambio masivo</b>: "Un usuario modificó 47 registros de clientes en menos de 10 minutos"
+      </td>
+    </tr>
 
-<!-- ==================== SCREENSHOTS ==================== -->
-<section class="oe_container oe_dark">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #333; font-weight: 700;">Screenshots</h3>
+    <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">ALTO</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Eliminación de adjuntos críticos</b>: "Documentos adjuntos a una orden de compra fueron eliminados después de la recepción de mercadería"
+      </td>
+    </tr>
 
-        <div class="oe_row" style="text-align: center;">
-            <div class="oe_span12" style="margin-bottom: 30px;">
-                <h5 style="color: #714B67; font-weight: 600; margin-bottom: 15px;">Real-Time Security Dashboard</h5>
-                <img class="oe_picture oe_screenshot" src="screenshot_dashboard.png"
-                     alt="Security Sentinel Dashboard with KPIs, charts, and recent activity"
-                     style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"/>
-            </div>
-        </div>
+  </table>
+</div>
 
-        <div class="oe_row" style="text-align: center;">
-            <div class="oe_span12" style="margin-bottom: 30px;">
-                <h5 style="color: #714B67; font-weight: 600; margin-bottom: 15px;">Immutable Audit Log with SHA-256 Hash</h5>
-                <img class="oe_picture oe_screenshot" src="screenshot_audit_log.png"
-                     alt="Audit log list view with action types, IP tracking, and integrity hash"
-                     style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"/>
-            </div>
-        </div>
+<p style="text-align: center; color: #888; font-size: 0.9em; margin-top: 20px;">
+  Vos decidís qué modelos monitorear: facturas, asientos, productos, clientes, usuarios, configuraciones, lo que sea.
+</p>
 
-        <div class="oe_row" style="text-align: center;">
-            <div class="oe_span12" style="margin-bottom: 30px;">
-                <h5 style="color: #714B67; font-weight: 600; margin-bottom: 15px;">Configurable Audit Rules</h5>
-                <img class="oe_picture oe_screenshot" src="screenshot_audit_rules.png"
-                     alt="Audit rules configuration with model selection and field-level tracking"
-                     style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"/>
-            </div>
-        </div>
+<!-- ==================== CÓMO FUNCIONA ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Cómo funciona — 3 capas de protección
+</h2>
 
-        <div class="oe_row" style="text-align: center;">
-            <div class="oe_span12" style="margin-bottom: 30px;">
-                <h5 style="color: #714B67; font-weight: 600; margin-bottom: 15px;">Compliance Report Wizard</h5>
-                <img class="oe_picture oe_screenshot" src="screenshot_report_wizard.png"
-                     alt="Report wizard to export audit data to PDF or Excel"
-                     style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);"/>
-            </div>
-        </div>
-    </div>
-</section>
+<div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin: 30px 0;">
 
-<!-- ==================== HOW IT WORKS ==================== -->
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #714B67; font-weight: 700;">How It Works</h3>
+  <div style="flex: 1; min-width: 240px; max-width: 320px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #312E81; color: #fff; font-size: 1.8em; font-weight: 700; line-height: 60px; margin: 0 auto 15px;">1</div>
+    <h4 style="color: #333; margin: 0 0 10px 0;">Captura automática</h4>
+    <p style="color: #666; font-size: 0.95em; margin: 0;">
+      Cada CREATE, WRITE, DELETE en los modelos que elijas queda sellado al instante
+      con hash SHA-256 + IP del cliente + usuario + timestamp.
+    </p>
+  </div>
 
-        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
+  <div style="flex: 1; min-width: 240px; max-width: 320px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #312E81; color: #fff; font-size: 1.8em; font-weight: 700; line-height: 60px; margin: 0 auto 15px;">2</div>
+    <h4 style="color: #333; margin: 0 0 10px 0;">Verificación semanal</h4>
+    <p style="color: #666; font-size: 0.95em; margin: 0;">
+      Una tarea programada recalcula los hashes de todos los logs y alerta a los
+      Compliance Officers si encuentra cualquier evidencia de manipulación.
+    </p>
+  </div>
 
-            <div style="display: flex; align-items: flex-start; margin-bottom: 30px;">
-                <div style="flex-shrink: 0; width: 50px; height: 50px; border-radius: 50%; background: #714B67; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 700; margin-right: 20px;">
-                    1
-                </div>
-                <div>
-                    <h5 style="color: #333; font-weight: 600; margin-bottom: 5px;">Install &amp; Activate</h5>
-                    <p style="color: #666; margin: 0; line-height: 1.6;">
-                        Install the module. Audit hooks are automatically injected into Odoo's core
-                        <code>create</code>, <code>write</code>, and <code>unlink</code> methods via
-                        a safe monkey-patch with double-patch protection.
-                    </p>
-                </div>
-            </div>
+  <div style="flex: 1; min-width: 240px; max-width: 320px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #312E81; color: #fff; font-size: 1.8em; font-weight: 700; line-height: 60px; margin: 0 auto 15px;">3</div>
+    <h4 style="color: #333; margin: 0 0 10px 0;">Dashboard + reportes</h4>
+    <p style="color: #666; font-size: 0.95em; margin: 0;">
+      KPIs en vivo, ranking de usuarios, modelos más tocados, integridad global.
+      Reportes PDF/Excel listos para entregar a auditor o fiscalizador.
+    </p>
+  </div>
 
-            <div style="display: flex; align-items: flex-start; margin-bottom: 30px;">
-                <div style="flex-shrink: 0; width: 50px; height: 50px; border-radius: 50%; background: #714B67; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 700; margin-right: 20px;">
-                    2
-                </div>
-                <div>
-                    <h5 style="color: #333; font-weight: 600; margin-bottom: 5px;">Configure Audit Rules</h5>
-                    <p style="color: #666; margin: 0; line-height: 1.6;">
-                        Go to <b>Security Sentinel &rarr; Configuration &rarr; Audit Rules</b>
-                        and select which models to monitor. Optionally restrict tracking to specific
-                        fields for fine-grained control.
-                    </p>
-                </div>
-            </div>
+</div>
 
-            <div style="display: flex; align-items: flex-start; margin-bottom: 30px;">
-                <div style="flex-shrink: 0; width: 50px; height: 50px; border-radius: 50%; background: #714B67; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 700; margin-right: 20px;">
-                    3
-                </div>
-                <div>
-                    <h5 style="color: #333; font-weight: 600; margin-bottom: 5px;">Automatic Monitoring</h5>
-                    <p style="color: #666; margin: 0; line-height: 1.6;">
-                        From this point forward, every create, update, and delete on monitored models
-                        is logged with the user, IP address, old/new values, and a SHA-256 integrity hash.
-                        All entries are <b>read-only and immutable</b>.
-                    </p>
-                </div>
-            </div>
+<!-- ==================== DASHBOARD ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Dashboard en tiempo real
+</h2>
+<p style="text-align: center; color: #666; max-width: 760px; margin: 0 auto 25px auto;">
+  Componente OWL nativo de Odoo 19. KPIs en vivo, gráficos de actividad por hora,
+  ranking de usuarios más activos, top de modelos monitoreados y estado de
+  integridad del log — todo en una pantalla sin recargar.
+</p>
+<p style="text-align: center;">
+  <img src="screenshot_dashboard.png"
+       alt="Dashboard Security Sentinel con KPIs, gráficos y actividad reciente"
+       style="width:100%;max-width:1100px;border:1px solid #eee;border-radius:8px;"/>
+</p>
 
-            <div style="display: flex; align-items: flex-start; margin-bottom: 30px;">
-                <div style="flex-shrink: 0; width: 50px; height: 50px; border-radius: 50%; background: #714B67; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 1.3em; font-weight: 700; margin-right: 20px;">
-                    4
-                </div>
-                <div>
-                    <h5 style="color: #333; font-weight: 600; margin-bottom: 5px;">Monitor &amp; Report</h5>
-                    <p style="color: #666; margin: 0; line-height: 1.6;">
-                        Use the real-time dashboard for daily oversight. Generate PDF or Excel compliance
-                        reports for auditors. The weekly integrity cron verifies all hashes and
-                        notifies Compliance Officers if tampering is detected.
-                    </p>
-                </div>
-            </div>
+<!-- ==================== AUDIT LOG INMUTABLE ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Audit log inmutable con hash SHA-256
+</h2>
+<p style="text-align: center; color: #666; max-width: 760px; margin: 0 auto 25px auto;">
+  Cada entrada del log queda sellada con un hash SHA-256 calculado a partir de un
+  salt criptográfico secreto. Los registros NO pueden ser editados ni eliminados
+  desde la interfaz, ni desde la ORM, ni por administradores. Cualquier intento
+  de manipulación deja huella.
+</p>
+<p style="text-align: center;">
+  <img src="screenshot_audit_log.png"
+       alt="Vista del audit log con tipo de acción, IP, usuario y hash de integridad"
+       style="width:100%;max-width:1100px;border:1px solid #eee;border-radius:8px;"/>
+</p>
 
-        </div>
-    </div>
-</section>
+<!-- ==================== REGLAS CONFIGURABLES ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Vos decidís qué monitorear
+</h2>
+<p style="text-align: center; color: #666; max-width: 760px; margin: 0 auto 25px auto;">
+  Configurá exactamente qué modelos y qué campos querés auditar. Activá o desactivá
+  el tracking de CREATE, WRITE o DELETE por cada modelo. Reducí ruido y enfocá
+  el audit log en lo que realmente importa para tu compliance.
+</p>
+<p style="text-align: center;">
+  <img src="screenshot_audit_rules.png"
+       alt="Configuración de reglas de auditoría con selección de modelos y campos"
+       style="width:100%;max-width:1100px;border:1px solid #eee;border-radius:8px;"/>
+</p>
 
-<!-- ==================== CONFIGURATION ==================== -->
-<section class="oe_container oe_dark">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #333; font-weight: 700;">Configuration</h3>
-        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
-            <p style="color: #555; font-size: 1.05em; text-align: center; margin-bottom: 25px;">
-                Navigate to <b>Settings &rarr; Security Sentinel</b> to configure:
-            </p>
-            <div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;">
+<!-- ==================== REPORTES ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Reportes listos para auditor (PDF + Excel)
+</h2>
+<p style="text-align: center; color: #666; max-width: 760px; margin: 0 auto 25px auto;">
+  Generá reportes filtrados por rango de fechas, modelo, usuario o tipo de acción.
+  Cada reporte incluye historial completo de cambios (valor antes / valor después)
+  con sello de integridad. PDF para el auditor, Excel para análisis interno.
+</p>
+<p style="text-align: center;">
+  <img src="screenshot_report_wizard.png"
+       alt="Asistente de generación de reportes de auditoría"
+       style="width:100%;max-width:1100px;border:1px solid #eee;border-radius:8px;"/>
+</p>
 
-                <div style="flex: 1; min-width: 220px; max-width: 340px; background: #fff; border-radius: 8px; padding: 20px;">
-                    <h5 style="color: #714B67;"><i class="fa fa-calendar"></i> Log Retention</h5>
-                    <p style="color: #666; font-size: 0.9em; margin: 0;">
-                        Set how many days audit logs are kept. A monthly cron automatically purges
-                        old records for GDPR/storage compliance.
-                    </p>
-                </div>
+<!-- ==================== EL LOG ES INVIOLABLE ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  El log es inviolable — nivel forense
+</h2>
+<div style="max-width: 900px; margin: 0 auto;">
+  <ul style="list-style: none; padding: 0;">
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      🔒 <b>Inmutabilidad de triple capa</b> — Ningún usuario, incluso administradores, puede modificar o eliminar entradas. <code>unlink</code> y <code>write</code> arbitrarios levantan <code>UserError</code>.
+    </li>
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      🧬 <b>SHA-256 con salt secreto por base de datos</b> — Cada entrada sellada al momento de creación con sal criptográfica única. Cualquier modificación rompe el hash y es detectada.
+    </li>
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      ✅ <b>Verificación automática semanal</b> — Cron recalcula hashes y marca cualquier mismatch como <code>tampered</code>. Compliance Officer recibe alerta inmediata.
+    </li>
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      🌐 <b>Tracking de IP del cliente</b> — Captura IP real incluso detrás de proxy/load balancer (soporte para X-Forwarded-For, X-Real-IP).
+    </li>
+    <li style="padding: 12px 0;">
+      👥 <b>Separación de roles</b> — Audit User (solo lectura) vs Compliance Officer (configuración completa + reportes). Separation of duties desde el día 1.
+    </li>
+  </ul>
+</div>
 
-                <div style="flex: 1; min-width: 220px; max-width: 340px; background: #fff; border-radius: 8px; padding: 20px;">
-                    <h5 style="color: #714B67;"><i class="fa fa-refresh"></i> Dashboard Refresh</h5>
-                    <p style="color: #666; font-size: 0.9em; margin: 0;">
-                        Configure the auto-refresh interval for the real-time dashboard.
-                        Default: 60 seconds.
-                    </p>
-                </div>
+<!-- ==================== BANNER LEY 21.663 (POSICIÓN MOVIDA) ==================== -->
+<div style="background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%); color: #fff; padding: 25px 30px; border-radius: 10px; margin: 50px 0 30px 0;">
+  <h3 style="color: #fff; margin: 0 0 8px 0; font-size: 1.3em;">
+    ⚖️ Compatible con Ley 21.663 de Chile
+  </h3>
+  <p style="color: #fff; margin: 0; font-size: 1.05em;">
+    SHA-256 encadenado + retención mínima 2 años + verificación automática semanal +
+    tracking de IP. Cumple el Art. 8b de la ley de ciberseguridad chilena vigente
+    desde marzo 2025. Multas hasta 40.000 UTM (~$2.720 millones CLP).
+  </p>
+</div>
 
-                <div style="flex: 1; min-width: 220px; max-width: 340px; background: #fff; border-radius: 8px; padding: 20px;">
-                    <h5 style="color: #714B67;"><i class="fa fa-key"></i> Hash Salt Management</h5>
-                    <p style="color: #666; font-size: 0.9em; margin: 0;">
-                        View a masked preview of the cryptographic salt. Regenerate only if
-                        absolutely necessary (invalidates all existing hashes).
-                    </p>
-                </div>
+<!-- ==================== CUMPLIMIENTO MULTI-NORMA ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 30px; text-align: center;">
+  Cumple las normas que te van a auditar
+</h2>
+<div style="max-width: 900px; margin: 0 auto; overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+    <thead>
+      <tr style="background: #312E81; color: #fff;">
+        <th style="padding: 12px; text-align: left;">Norma</th>
+        <th style="padding: 12px; text-align: left;">Qué exige</th>
+        <th style="padding: 12px; text-align: center; width: 80px;">Cumple</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid #e8e8e8;">
+        <td style="padding: 12px;"><b>Ley 21.663 Chile</b> Art. 8b</td>
+        <td style="padding: 12px;">Audit log inmutable, retención 2 años, integridad verificable</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+        <td style="padding: 12px;"><b>ISO 27001</b> A.12.4</td>
+        <td style="padding: 12px;">Logging y monitoreo de eventos de seguridad</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8;">
+        <td style="padding: 12px;"><b>SOX</b> Section 404</td>
+        <td style="padding: 12px;">Controles internos sobre reportes financieros</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+        <td style="padding: 12px;"><b>GDPR</b> Art. 30</td>
+        <td style="padding: 12px;">Records of processing activities — quién accede a datos personales</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8;">
+        <td style="padding: 12px;"><b>Ley 19.628</b> Chile</td>
+        <td style="padding: 12px;">Protección de datos personales — bitácora de accesos</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr>
+        <td style="padding: 12px;"><b>NIST 800-53</b> AU-3</td>
+        <td style="padding: 12px;">Content of audit records — integridad y completitud</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
 
-            </div>
-        </div>
-    </div>
-</section>
+<!-- ==================== COMPATIBILIDAD ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Compatibilidad
+</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 25px 0;">
+  <span style="background: #16a34a; color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: 600;">Odoo 19.0 Community + Enterprise</span>
+</div>
+<p style="text-align: center; color: #888; font-size: 0.9em;">
+  Versiones para Odoo 17.0 y 18.0 disponibles bajo solicitud — escribinos a contacto@neurodev.cl.
+</p>
 
-<!-- ==================== TECHNICAL DETAILS ==================== -->
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #714B67; font-weight: 700;">Technical Details</h3>
-        <div style="max-width: 750px; margin: 0 auto; padding: 0 20px;">
-            <table class="table table-bordered" style="background: #fff; border-radius: 8px; overflow: hidden;">
-                <tbody>
-                    <tr>
-                        <td style="width: 40%; font-weight: 600; background: #f8f9fa;">Odoo Version</td>
-                        <td>19.0</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Module Version</td>
-                        <td>19.0.2.0.0</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">License</td>
-                        <td>OPL-1 (Odoo Proprietary)</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Dependencies</td>
-                        <td><code>base</code>, <code>mail</code>, <code>web</code></td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Frontend</td>
-                        <td>OWL Framework (no legacy jQuery)</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Hash Algorithm</td>
-                        <td>SHA-256 with per-instance cryptographic salt</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Hook Method</td>
-                        <td>Safe monkey-patch on BaseModel (<code>create</code>, <code>write</code>, <code>unlink</code>) with double-patch guard</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Performance</td>
-                        <td>5-minute rule cache, composite DB indexes, batch SQL processing, raw SQL for integrity verification</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Reports</td>
-                        <td>PDF (QWeb) and Excel export via wizard</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Scheduled Actions</td>
-                        <td>Weekly integrity verification + monthly log cleanup</td>
-                    </tr>
-                    <tr>
-                        <td style="font-weight: 600; background: #f8f9fa;">Languages</td>
-                        <td>English, Spanish (es.po included)</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-</section>
+<!-- ==================== STACK + LICENCIA ==================== -->
+<div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin: 40px 0;">
+  <h3 style="color: #312E81; margin-top: 0;">Stack técnico</h3>
+  <ul style="margin: 0; color: #555;">
+    <li>Python 3 + Odoo ORM — captura, hashing, integridad</li>
+    <li>OWL 2 + Chart.js — dashboard reactivo</li>
+    <li>QWeb + xlsxwriter — reportes</li>
+    <li>Hook a nivel ORM — no requiere modificar modelos existentes</li>
+  </ul>
+  <h3 style="color: #312E81; margin-top: 20px;">Licencia</h3>
+  <p style="color: #555; margin: 0;">
+    OPL-1 (Odoo Proprietary License v1) — perpetua, licencia por base de datos.
+    Código fuente publicado en <code>github.com/neurodev-apps</code> para auditoría
+    y transparencia comunitaria.
+  </p>
+</div>
 
-<!-- ==================== ADDITIONAL HIGHLIGHTS ==================== -->
-<section class="oe_container oe_dark">
-    <div class="oe_row oe_spaced">
-        <h3 class="oe_slogan" style="color: #333; font-weight: 700;">What Sets This Apart</h3>
-        <div style="max-width: 800px; margin: 0 auto; padding: 0 20px;">
-            <div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;">
+<!-- ==================== CTA + SOPORTE ==================== -->
+<div style="background: linear-gradient(135deg, #0A1628 0%, #1E3A5F 100%); color: #fff; padding: 35px 30px; border-radius: 12px; text-align: center; margin: 40px 0;">
+  <h3 style="color: #00E5FF; margin: 0 0 12px 0;">¿Dudas antes de instalar?</h3>
+  <p style="color: #B8C5D6; margin: 0 0 20px 0;">
+    Soporte directo del desarrollador. Implementación remota y asesoría Ley 21.663 disponibles.
+  </p>
+  <p style="margin: 0;">
+    🌐 <a href="https://neurodev.cl" style="color: #00E5FF;">neurodev.cl</a> &middot;
+    ✉️ <a href="mailto:contacto@neurodev.cl" style="color: #00E5FF;">contacto@neurodev.cl</a> &middot;
+    📱 WhatsApp +56 9 2837 4712
+  </p>
+</div>
 
-                <div style="flex: 1; min-width: 200px; max-width: 380px; background: #fff; border-radius: 8px; padding: 20px; text-align: center;">
-                    <i class="fa fa-bolt" style="font-size: 30px; color: #F0C040; margin-bottom: 10px;"></i>
-                    <h5 style="color: #333;">Zero Performance Impact</h5>
-                    <p style="color: #666; font-size: 0.9em;">
-                        Rule caching, composite indexes, and batch processing ensure
-                        negligible overhead even at high transaction volumes.
-                    </p>
-                </div>
+<!-- =================================================================== -->
+<!-- ====================== 🇬🇧 ENGLISH =============================== -->
+<!-- =================================================================== -->
 
-                <div style="flex: 1; min-width: 200px; max-width: 380px; background: #fff; border-radius: 8px; padding: 20px; text-align: center;">
-                    <i class="fa fa-map-marker" style="font-size: 30px; color: #F0C040; margin-bottom: 10px;"></i>
-                    <h5 style="color: #333;">IP Address Tracking</h5>
-                    <p style="color: #666; font-size: 0.9em;">
-                        Captures the client IP for every action with full proxy support
-                        (X-Forwarded-For, X-Real-IP).
-                    </p>
-                </div>
+<hr style="border: 0; border-top: 3px dashed #ccc; margin: 60px 0;"/>
 
-                <div style="flex: 1; min-width: 200px; max-width: 380px; background: #fff; border-radius: 8px; padding: 20px; text-align: center;">
-                    <i class="fa fa-history" style="font-size: 30px; color: #F0C040; margin-bottom: 10px;"></i>
-                    <h5 style="color: #333;">Full Change Diffs</h5>
-                    <p style="color: #666; font-size: 0.9em;">
-                        Old and new values are stored as JSON for every write operation.
-                        See exactly what changed, field by field.
-                    </p>
-                </div>
+<!-- ==================== HERO EN ==================== -->
+<div style="background: linear-gradient(135deg, #0A1628 0%, #1E3A5F 100%); color: #fff; padding: 50px 30px; border-radius: 12px; margin-bottom: 30px; text-align: center;">
+  <h1 style="color: #00E5FF; font-size: 2.5em; margin: 0 0 12px 0; font-weight: 800;">
+    Security Sentinel
+  </h1>
+  <p style="color: #fff; font-size: 1.4em; margin: 0 0 18px 0; font-weight: 600;">
+    If someone touched your data, the log remembers. And nobody can erase it.
+  </p>
+  <p style="color: #B8C5D6; font-size: 1.1em; max-width: 760px; margin: 0 auto;">
+    Forensic-grade audit trail of every change in your Odoo, sealed with SHA-256.
+    Who, when, from which IP, value before and value after. Tamper-proof.
+    Built for audits and compliance.
+  </p>
+</div>
 
-            </div>
-        </div>
-    </div>
-</section>
+<!-- ==================== PROBLEM EN ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 40px; text-align: center;">
+  Why your Odoo is vulnerable today
+</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; margin: 30px 0;">
 
-<!-- ==================== SUPPORT ==================== -->
-<section class="oe_container">
-    <div class="oe_row oe_spaced">
-        <div class="oe_slogan" style="padding: 30px 20px;">
-            <h3 style="color: #714B67; font-weight: 700; margin-bottom: 15px;">Support &amp; Contact</h3>
-            <p style="color: #555; font-size: 1.05em; max-width: 600px; margin: 0 auto 15px;">
-                Need help with installation, configuration, or have a feature request?
-                We are here to help.
-            </p>
-            <p style="margin-bottom: 5px;">
-                <i class="fa fa-envelope" style="color: #714B67;"></i>
-                <a href="mailto:neurodev.odoo@gmail.com" style="color: #714B67; font-weight: 600; font-size: 1.1em;">
-                    neurodev.odoo@gmail.com
-                </a>
-            </p>
-            <p style="margin-bottom: 5px;">
-                <i class="fa fa-github" style="color: #714B67;"></i>
-                <a href="https://github.com/neurodev-apps" style="color: #714B67; font-weight: 600;" target="_blank">
-                    github.com/neurodev-apps
-                </a>
-            </p>
-            <hr style="max-width: 200px; margin: 25px auto; border-color: #ddd;"/>
-            <p style="color: #999; font-size: 0.9em;">
-                Developed by <b>NeuroDev</b>
-            </p>
-        </div>
-    </div>
+  <div style="flex: 1; min-width: 260px; max-width: 340px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #dc3545; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="color: #dc3545; margin: 0 0 10px 0; font-size: 2.2em;">0</h4>
+    <p style="color: #444; margin: 0; font-size: 0.95em;">
+      <b>Immutable logs in native Odoo.</b> Default logging can be modified or disabled.
+      There is no way to prove the record was not altered.
+    </p>
+  </div>
+
+  <div style="flex: 1; min-width: 260px; max-width: 340px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #fd7e14; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="color: #fd7e14; margin: 0 0 10px 0; font-size: 2.2em;">12 months</h4>
+    <p style="color: #444; margin: 0; font-size: 0.95em;">
+      <b>Average time to detect internal fraud</b> in companies without forensic audit
+      logs (IBM Cost of a Data Breach 2024). Late detection means damage done.
+    </p>
+  </div>
+
+  <div style="flex: 1; min-width: 260px; max-width: 340px; background: #fff; border-radius: 10px; padding: 25px; border-left: 4px solid #714B67; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+    <h4 style="color: #714B67; margin: 0 0 10px 0; font-size: 2.2em;">2 years</h4>
+    <p style="color: #444; margin: 0; font-size: 0.95em;">
+      <b>Minimum retention required</b> by ISO 27001, GDPR, SOX and most modern
+      cybersecurity laws. Without forensic logs, no proof of compliance.
+    </p>
+  </div>
+
+</div>
+
+<!-- ==================== WHAT IT CATCHES EN ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 45px; text-align: center;">
+  What it catches — real scenarios
+</h2>
+<p style="text-align: center; color: #666; max-width: 720px; margin: 0 auto 30px auto;">
+  Every CREATE, WRITE and DELETE on the models you select, logged with who, when,
+  from which IP, value before and value after. Typical examples:
+</p>
+
+<div style="max-width: 900px; margin: 0 auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+
+    <tr style="border-bottom: 1px solid #e8e8e8;">
+      <td style="padding: 14px; vertical-align: top; width: 80px;">
+        <span style="background: #dc2626; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">CRITICAL</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Approved invoice deleted</b>: "A validated invoice was deleted by a user with elevated permissions on Friday at 18:30"
+      </td>
+    </tr>
+
+    <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">HIGH</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Suspicious price change</b>: "A product's price was modified 5 times in 2 hours from 3 different IP addresses"
+      </td>
+    </tr>
+
+    <tr style="border-bottom: 1px solid #e8e8e8;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">HIGH</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Closed journal entry modified</b>: "A closed accounting entry was modified 30 days after its creation date"
+      </td>
+    </tr>
+
+    <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #dc2626; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">CRITICAL</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>After-hours access</b>: "Login at 03:42 from unusual IP with modification of vendor banking data"
+      </td>
+    </tr>
+
+    <tr style="border-bottom: 1px solid #e8e8e8;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #facc15; color: #333; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">MEDIUM</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Mass change</b>: "A user modified 47 customer records in less than 10 minutes"
+      </td>
+    </tr>
+
+    <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+      <td style="padding: 14px; vertical-align: top;">
+        <span style="background: #f59e0b; color: white; padding: 4px 10px; border-radius: 4px; font-size: 0.8em; font-weight: 700;">HIGH</span>
+      </td>
+      <td style="padding: 14px;">
+        <b>Critical attachments deleted</b>: "Documents attached to a purchase order were deleted after goods receipt"
+      </td>
+    </tr>
+
+  </table>
+</div>
+
+<p style="text-align: center; color: #888; font-size: 0.9em; margin-top: 20px;">
+  You decide which models to monitor: invoices, journal entries, products, customers, users, configurations, anything.
+</p>
+
+<!-- ==================== HOW IT WORKS EN ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  How it works — 3 protection layers
+</h2>
+
+<div style="display: flex; flex-wrap: wrap; gap: 25px; justify-content: center; margin: 30px 0;">
+
+  <div style="flex: 1; min-width: 240px; max-width: 320px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #312E81; color: #fff; font-size: 1.8em; font-weight: 700; line-height: 60px; margin: 0 auto 15px;">1</div>
+    <h4 style="color: #333; margin: 0 0 10px 0;">Automatic capture</h4>
+    <p style="color: #666; font-size: 0.95em; margin: 0;">
+      Every CREATE, WRITE, DELETE on chosen models is sealed instantly with SHA-256
+      hash + client IP + user + timestamp.
+    </p>
+  </div>
+
+  <div style="flex: 1; min-width: 240px; max-width: 320px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #312E81; color: #fff; font-size: 1.8em; font-weight: 700; line-height: 60px; margin: 0 auto 15px;">2</div>
+    <h4 style="color: #333; margin: 0 0 10px 0;">Weekly verification</h4>
+    <p style="color: #666; font-size: 0.95em; margin: 0;">
+      Scheduled task recomputes all log hashes and alerts Compliance Officers if any
+      tampering evidence is detected.
+    </p>
+  </div>
+
+  <div style="flex: 1; min-width: 240px; max-width: 320px; text-align: center; padding: 30px 20px; background: #f8f9fa; border-radius: 12px;">
+    <div style="width: 60px; height: 60px; border-radius: 50%; background: #312E81; color: #fff; font-size: 1.8em; font-weight: 700; line-height: 60px; margin: 0 auto 15px;">3</div>
+    <h4 style="color: #333; margin: 0 0 10px 0;">Dashboard + reports</h4>
+    <p style="color: #666; font-size: 0.95em; margin: 0;">
+      Live KPIs, user ranking, most-touched models, global integrity status.
+      PDF/Excel reports ready to hand to auditors or regulators.
+    </p>
+  </div>
+
+</div>
+
+<!-- ==================== INTEGRITY EN ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  The log is tamper-proof — forensic-grade
+</h2>
+<div style="max-width: 900px; margin: 0 auto;">
+  <ul style="list-style: none; padding: 0;">
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      🔒 <b>Triple-layer immutability</b> — No user, not even administrators, can modify or delete entries. <code>unlink</code> and arbitrary <code>write</code> raise <code>UserError</code>.
+    </li>
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      🧬 <b>SHA-256 with per-database secret salt</b> — Cryptographic salt unique per DB. Any modification breaks the hash and is detected.
+    </li>
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      ✅ <b>Automated weekly integrity check</b> — Cron recomputes hashes and flags any mismatch as <code>tampered</code>. Compliance Officer gets immediate alert.
+    </li>
+    <li style="padding: 12px 0; border-bottom: 1px solid #eee;">
+      🌐 <b>Client IP tracking</b> — Captures real IP even behind proxy/load balancer (X-Forwarded-For, X-Real-IP support).
+    </li>
+    <li style="padding: 12px 0;">
+      👥 <b>Role-based access</b> — Audit User (read-only) vs Compliance Officer (full config + reports). Separation of duties from day one.
+    </li>
+  </ul>
+</div>
+
+<!-- ==================== COMPLIANCE BANNER EN (POSITION MOVED) ==================== -->
+<div style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); color: #fff; padding: 25px 30px; border-radius: 10px; margin: 50px 0 30px 0;">
+  <h3 style="color: #fff; margin: 0 0 8px 0; font-size: 1.3em;">
+    🛡️ Multi-Standard Compliance Audit Trail
+  </h3>
+  <p style="color: #fff; margin: 0; font-size: 1.05em;">
+    SHA-256 chained hashing + 2-year retention + weekly automated verification +
+    IP tracking. Ready for ISO 27001, SOX, GDPR, PCI DSS and regional cybersecurity laws.
+  </p>
+</div>
+
+<!-- ==================== COMPLIANCE TABLE EN ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 30px; text-align: center;">
+  Meets the standards your auditors check
+</h2>
+<div style="max-width: 900px; margin: 0 auto; overflow-x: auto;">
+  <table style="width: 100%; border-collapse: collapse; font-size: 0.95em;">
+    <thead>
+      <tr style="background: #312E81; color: #fff;">
+        <th style="padding: 12px; text-align: left;">Standard</th>
+        <th style="padding: 12px; text-align: left;">Requirement</th>
+        <th style="padding: 12px; text-align: center; width: 80px;">Meets</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr style="border-bottom: 1px solid #e8e8e8;">
+        <td style="padding: 12px;"><b>ISO 27001</b> A.12.4</td>
+        <td style="padding: 12px;">Logging and monitoring of security events</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+        <td style="padding: 12px;"><b>SOX</b> Section 404</td>
+        <td style="padding: 12px;">Internal controls over financial reporting</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8;">
+        <td style="padding: 12px;"><b>GDPR</b> Art. 30</td>
+        <td style="padding: 12px;">Records of processing activities</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8; background: #fafafa;">
+        <td style="padding: 12px;"><b>PCI DSS</b> Req. 10</td>
+        <td style="padding: 12px;">Tracking and monitoring of access to cardholder data</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr style="border-bottom: 1px solid #e8e8e8;">
+        <td style="padding: 12px;"><b>NIST 800-53</b> AU-3</td>
+        <td style="padding: 12px;">Content of audit records</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+      <tr>
+        <td style="padding: 12px;"><b>HIPAA</b> §164.312(b)</td>
+        <td style="padding: 12px;">Audit controls for protected health information</td>
+        <td style="padding: 12px; text-align: center; color: #16a34a; font-size: 1.3em;">✓</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ==================== COMPATIBILITY EN ==================== -->
+<h2 style="color: #312E81; font-size: 1.9em; margin-top: 50px; text-align: center;">
+  Compatibility
+</h2>
+<div style="display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin: 25px 0;">
+  <span style="background: #16a34a; color: #fff; padding: 10px 22px; border-radius: 8px; font-weight: 600;">Odoo 19.0 Community + Enterprise</span>
+</div>
+<p style="text-align: center; color: #888; font-size: 0.9em;">
+  Backports to Odoo 17.0 and 18.0 available on request — contact contacto@neurodev.cl.
+</p>
+
+<!-- ==================== STACK + LICENSE EN ==================== -->
+<div style="background: #f8f9fa; padding: 30px; border-radius: 10px; margin: 40px 0;">
+  <h3 style="color: #312E81; margin-top: 0;">Tech stack</h3>
+  <ul style="margin: 0; color: #555;">
+    <li>Python 3 + Odoo ORM — capture, hashing, integrity</li>
+    <li>OWL 2 + Chart.js — reactive dashboard</li>
+    <li>QWeb + xlsxwriter — reports</li>
+    <li>ORM-level hook — does not require modifying existing models</li>
+  </ul>
+  <h3 style="color: #312E81; margin-top: 20px;">License</h3>
+  <p style="color: #555; margin: 0;">
+    OPL-1 (Odoo Proprietary License v1) — perpetual, single-database license.
+    Source code published on <code>github.com/neurodev-apps</code> for transparency
+    and community auditability.
+  </p>
+</div>
+
+<!-- ==================== CTA + SUPPORT EN ==================== -->
+<div style="background: linear-gradient(135deg, #0A1628 0%, #1E3A5F 100%); color: #fff; padding: 35px 30px; border-radius: 12px; text-align: center; margin: 40px 0;">
+  <h3 style="color: #00E5FF; margin: 0 0 12px 0;">Questions before installing?</h3>
+  <p style="color: #B8C5D6; margin: 0 0 20px 0;">
+    Direct support from the developer. Remote installation and compliance advisory available.
+  </p>
+  <p style="margin: 0;">
+    🌐 <a href="https://neurodev.cl" style="color: #00E5FF;">neurodev.cl</a> &middot;
+    ✉️ <a href="mailto:contacto@neurodev.cl" style="color: #00E5FF;">contacto@neurodev.cl</a> &middot;
+    📱 WhatsApp +56 9 2837 4712
+  </p>
+</div>
+
+<p style="text-align: center; color: #888; font-size: 0.9em; margin-top: 40px; padding-top: 20px; border-top: 1px solid #eee;">
+  Built by <b>NeuroDev</b> &mdash; Chile &middot; <a href="https://neurodev.cl" style="color:#312E81;">neurodev.cl</a>
+</p>
+
 </section>
