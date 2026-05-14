@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Odoo 17 Security Sentinel: Anti-Fraud & Audit Log',
-    'version': '17.0.2.1.0',
+    'version': '17.0.2.1.1',
     'category': 'Security',
     'summary': 'Immutable SHA-256 audit logging, real-time OWL dashboard, compliance reports, role-based security & automated integrity verification',
     'description': """
@@ -25,7 +25,7 @@ All audit logs are read-only and cannot be modified or deleted.
     'website': 'https://neurodev.cl',
     'support': 'contacto@neurodev.cl',
     'license': 'OPL-1',
-    'price': 249.00,
+    'price': 159.00,
     'currency': 'USD',
     'images': ['static/description/banner.png'],
     'depends': [
