@@ -9,7 +9,6 @@
         <field name="report_name">audit_security_sentinel.report_audit</field>
         <field name="report_file">audit_security_sentinel.report_audit</field>
         <field name="print_report_name">'SecurityAuditReport_%s_%s' % (object.date_from, object.date_to)</field>
-        <field name="groups_id" eval="[(4, ref('audit_security_sentinel.group_audit_user'))]"/>
     </record>
 
 </odoo>
