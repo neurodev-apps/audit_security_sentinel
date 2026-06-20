@@ -106,7 +106,7 @@ class AuditReportWizard(models.TransientModel):
 
         domain = [
             ('create_date', '>=', fields.Datetime.to_datetime(self.date_from)),
-            ('create_date', '<=', fields.Datetime.to_datetime(
+            ('create_date', '<', fields.Datetime.to_datetime(
                 self.date_to + timedelta(days=1)
             )),
         ]
@@ -245,7 +245,13 @@ class AuditReportWizard(models.TransientModel):
         integrity = self._verify_integrity(logs)
 
         buffer = io.BytesIO()
-        workbook = xlsxwriter.Workbook(buffer, {'in_memory': True})
+        # strings_to_formulas/urls=False prevents formula/CSV injection (CR-08):
+        # DB values starting with =, +, - or @ are stored as plain text, not formulas.
+        workbook = xlsxwriter.Workbook(buffer, {
+            'in_memory': True,
+            'strings_to_formulas': False,
+            'strings_to_urls': False,
+        })
 
         # --- Formats ---
         fmt_title = workbook.add_format({
@@ -385,12 +391,12 @@ class AuditReportWizard(models.TransientModel):
                 ctx_dt.replace(tzinfo=None),
                 fmt_cell_date,
             )
-            ws_logs.write(row_idx, 1, log.user_id.name or '', fmt_cell)
-            ws_logs.write(row_idx, 2, action_labels.get(log.action_type, log.action_type), fmt_cell)
-            ws_logs.write(row_idx, 3, log.model_model or '', fmt_cell)
-            ws_logs.write(row_idx, 4, log.name or '', fmt_cell)
+            ws_logs.write_string(row_idx, 1, log.user_id.name or '', fmt_cell)
+            ws_logs.write_string(row_idx, 2, action_labels.get(log.action_type, log.action_type), fmt_cell)
+            ws_logs.write_string(row_idx, 3, log.model_model or '', fmt_cell)
+            ws_logs.write_string(row_idx, 4, log.name or '', fmt_cell)
             ws_logs.write(row_idx, 5, log.res_id or 0, fmt_number)
-            ws_logs.write(row_idx, 6, log.ip_address or '', fmt_cell)
+            ws_logs.write_string(row_idx, 6, log.ip_address or '', fmt_cell)
             if self.include_details:
                 details_str = ''
                 if log.details:
@@ -399,7 +405,7 @@ class AuditReportWizard(models.TransientModel):
                         details_str = json.dumps(details_dict, indent=2, ensure_ascii=False)
                     except (json.JSONDecodeError, TypeError):
                         details_str = log.details or ''
-                ws_logs.write(row_idx, 7, details_str, fmt_cell)
+                ws_logs.write_string(row_idx, 7, details_str, fmt_cell)
 
         # =====================================================================
         # Sheet 3: Integrity

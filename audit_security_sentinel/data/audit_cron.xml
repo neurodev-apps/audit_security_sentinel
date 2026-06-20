@@ -21,7 +21,7 @@
         <field name="code">model._cron_cleanup_old_logs()</field>
         <field name="interval_number">1</field>
         <field name="interval_type">months</field>
-        <field name="active">True</field>
+        <field name="active">False</field>
     </record>
 
 </data>
