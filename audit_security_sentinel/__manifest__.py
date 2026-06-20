@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Odoo 17 Security Sentinel: Anti-Fraud & Audit Log',
-    'version': '17.0.2.1.2',
+    'version': '17.0.2.1.3',
     'category': 'Security',
     'summary': 'Immutable SHA-256 audit logging, real-time OWL dashboard, compliance reports, role-based security & automated integrity verification',
     'description': """
@@ -19,7 +19,9 @@ Enterprise-grade security module for Odoo 17:
 * **Configurable Rules** — choose models and fields to monitor
 * **Detailed Change History** — old/new value diffs for every modification
 
-All audit logs are read-only and cannot be modified or deleted.
+Audit logs are read-only and cannot be modified. Deletion is blocked by default;
+an optional retention policy can purge logs older than a configured period, and
+only when a Compliance Officer explicitly enables it.
     """,
     'author': 'NeuroDev',
     'website': 'https://neurodev.cl',
@@ -33,6 +35,9 @@ All audit logs are read-only and cannot be modified or deleted.
         'mail',
         'web',
     ],
+    'external_dependencies': {
+        'python': ['xlsxwriter'],
+    },
     'data': [
         'security/audit_security.xml',
         'security/ir.model.access.csv',
