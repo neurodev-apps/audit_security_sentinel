@@ -136,6 +136,19 @@ class BaseModelAuditHook(models.AbstractModel):
 
         return result
 
+    @api.model
+    def _invalidate_rules_cache(self):
+        """Drop the cached audit rules for the current database (MD-02).
+
+        Called from audit.rule create/write/unlink so a rule change takes
+        effect immediately instead of waiting up to _CACHE_TTL seconds. In
+        multi-worker setups each worker still refreshes within the TTL.
+        """
+        dbname = self.env.cr.dbname
+        with self._rules_lock:
+            self._audit_rules_cache.pop(dbname, None)
+            self._audit_cache_timestamps.pop(dbname, None)
+
     def _get_ip_address(self):
         """Extract client IP address from request headers."""
         try:
@@ -258,6 +271,8 @@ class BaseModelExtended(models.AbstractModel):
         models with 100+ fields).
         """
         AuditHook = self.env['base.model.audit.hook']
+        # CR-10: honour log_field_ids on create, exactly like write does.
+        monitored_fields = rule['field_names'] if isinstance(rule, dict) else rule.get_monitored_fields()
 
         for idx, record in enumerate(self):
             details = {
@@ -271,6 +286,9 @@ class BaseModelExtended(models.AbstractModel):
                 if field_name in ('id', 'create_uid', 'create_date', 'write_uid', 'write_date', '__last_update'):
                     continue
                 if field_name not in record._fields:
+                    continue
+                # CR-10: if specific fields are configured, only log those.
+                if monitored_fields and field_name not in monitored_fields:
                     continue
                 try:
                     field_value = record[field_name]

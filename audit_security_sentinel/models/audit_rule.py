@@ -90,10 +90,24 @@ class AuditRule(models.Model):
 
     @api.constrains('model_id')
     def _check_model_not_audit(self):
-        """Prevent creating rules for audit models themselves."""
+        """Block rules for system, transient and audit models (MD-01).
+
+        The view domain already hides these, but a rule can still be created
+        via RPC or import; this constraint is the real backend guard.
+        """
+        forbidden_prefixes = ('ir.', 'base.', 'bus.', 'audit.')
         for rule in self:
-            if rule.model_id and rule.model_id.model in ('audit.log', 'audit.rule'):
-                raise ValidationError(_('Cannot create audit rules for the audit system itself.'))
+            if not rule.model_id:
+                continue
+            model_name = rule.model_id.model
+            model_obj = self.env.get(model_name)
+            if (model_name.startswith(forbidden_prefixes)
+                    or model_name in ('audit.log', 'audit.rule')
+                    or (model_obj is not None and model_obj._transient)):
+                raise ValidationError(_(
+                    'Cannot create audit rules for system, transient or audit '
+                    'models (%s).'
+                ) % model_name)
 
     def action_open_audit_logs(self):
         """Open audit logs filtered by this rule's model."""
@@ -113,3 +127,22 @@ class AuditRule(models.Model):
         if self.log_field_ids:
             return self.log_field_ids.mapped('name')
         return []
+
+    # -------------------------------------------------------------------------
+    # Cache invalidation (MD-02) — rule changes must take effect immediately
+    # -------------------------------------------------------------------------
+    @api.model_create_multi
+    def create(self, vals_list):
+        rules = super().create(vals_list)
+        self.env['base.model.audit.hook']._invalidate_rules_cache()
+        return rules
+
+    def write(self, vals):
+        res = super().write(vals)
+        self.env['base.model.audit.hook']._invalidate_rules_cache()
+        return res
+
+    def unlink(self):
+        res = super().unlink()
+        self.env['base.model.audit.hook']._invalidate_rules_cache()
+        return res
