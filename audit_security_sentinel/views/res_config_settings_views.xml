@@ -29,6 +29,16 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting
+                            string="Trusted Proxies"
+                            help="Comma-separated proxy IPs allowed to set the client IP via X-Forwarded-For / X-Real-IP. Empty = record only the direct connection IP.">
+                            <div class="content-group">
+                                <div class="row mt-2">
+                                    <label for="audit_trusted_proxies" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_trusted_proxies" class="col-lg-6"/>
+                                </div>
+                            </div>
+                        </setting>
                     </block>
                     <block title="Integrity &amp; Cryptography" name="audit_integrity_settings">
                         <setting

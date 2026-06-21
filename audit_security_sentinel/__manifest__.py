@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Odoo 17 Security Sentinel: Anti-Fraud & Audit Log',
-    'version': '17.0.2.1.3',
+    'version': '17.0.2.1.4',
     'category': 'Security',
     'summary': 'Immutable SHA-256 audit logging, real-time OWL dashboard, compliance reports, role-based security & automated integrity verification',
     'description': """
