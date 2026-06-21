@@ -150,21 +150,29 @@ class BaseModelAuditHook(models.AbstractModel):
             self._audit_cache_timestamps.pop(dbname, None)
 
     def _get_ip_address(self):
-        """Extract client IP address from request headers."""
+        """Extract client IP address from the request.
+
+        CR-03: only trust X-Forwarded-For / X-Real-IP when the direct peer
+        (remote_addr) is a configured trusted proxy. Otherwise a client could
+        spoof its IP with a forged header. The trusted proxy list is configurable
+        via the ``audit_security_sentinel.trusted_proxies`` system parameter
+        (comma-separated). Empty by default = trust only the direct remote_addr.
+        """
         try:
             if request and hasattr(request, 'httprequest'):
-                # Check for proxy headers first
-                forwarded_for = request.httprequest.headers.get('X-Forwarded-For')
-                if forwarded_for:
-                    # Take the first IP in the chain (original client)
-                    return forwarded_for.split(',')[0].strip()
-
-                real_ip = request.httprequest.headers.get('X-Real-IP')
-                if real_ip:
-                    return real_ip.strip()
-
-                # Fallback to remote address
-                return request.httprequest.remote_addr or 'Unknown'
+                remote_addr = request.httprequest.remote_addr
+                trusted = self.env['ir.config_parameter'].sudo().get_param(
+                    'audit_security_sentinel.trusted_proxies', ''
+                )
+                trusted_proxies = {p.strip() for p in trusted.split(',') if p.strip()}
+                if remote_addr in trusted_proxies:
+                    forwarded_for = request.httprequest.headers.get('X-Forwarded-For')
+                    if forwarded_for:
+                        return forwarded_for.split(',')[0].strip()
+                    real_ip = request.httprequest.headers.get('X-Real-IP')
+                    if real_ip:
+                        return real_ip.strip()
+                return remote_addr or 'Unknown'
         except Exception:
             pass
         return 'System/Cron'
@@ -215,7 +223,7 @@ class BaseModelAuditHook(models.AbstractModel):
             return '<binary data>'
         return value
 
-    def _create_audit_log(self, action_type, model_name, res_id, name, details_dict):
+    def _create_audit_log(self, action_type, model_name, res_id, name, details_dict, company_id=None):
         """Create an audit log entry with a SHA-256 integrity hash.
 
         The hash is computed AFTER the ORM create so we use the actual
@@ -231,6 +239,9 @@ class BaseModelAuditHook(models.AbstractModel):
             with self.env.cr.savepoint():
                 details_json = json.dumps(details_dict, ensure_ascii=False, default=str)
                 user_id = self.env.uid or SUPERUSER_ID
+                # CR-09: use the affected record's company; fall back to env.company
+                if company_id is None:
+                    company_id = self.env.company.id if self.env.company else False
 
                 # Step 1 — create the record without a hash first
                 record = self.env['audit.log'].sudo().create({
@@ -242,7 +253,7 @@ class BaseModelAuditHook(models.AbstractModel):
                     'action_type': action_type,
                     'details': details_json,
                     'hash': '',
-                    'company_id': self.env.company.id if self.env.company else False,
+                    'company_id': company_id,
                 })
 
                 # Step 2 — compute hash using the real create_date from the DB
@@ -298,12 +309,14 @@ class BaseModelExtended(models.AbstractModel):
                 except Exception:
                     continue
 
+            log_company = record.company_id.id if 'company_id' in record._fields else None
             AuditHook._create_audit_log(
                 'create',
                 self._name,
                 record.id,
                 AuditHook._get_record_display_name(record),
-                details
+                details,
+                company_id=log_company,
             )
 
     def _audit_write(self, vals, rule, old_values):
@@ -350,12 +363,14 @@ class BaseModelExtended(models.AbstractModel):
                     'action': 'write',
                     'changes': changes,
                 }
+                log_company = record.company_id.id if 'company_id' in record._fields else None
                 AuditHook._create_audit_log(
                     'write',
                     self._name,
                     record.id,
                     AuditHook._get_record_display_name(record),
-                    details
+                    details,
+                    company_id=log_company,
                 )
 
     def _audit_unlink(self, rule):
@@ -386,12 +401,14 @@ class BaseModelExtended(models.AbstractModel):
             if deleted_values:
                 details['key_values'] = deleted_values
 
+            log_company = record.company_id.id if 'company_id' in record._fields else None
             AuditHook._create_audit_log(
                 'unlink',
                 self._name,
                 record.id,
                 AuditHook._get_record_display_name(record),
-                details
+                details,
+                company_id=log_company,
             )
 
 

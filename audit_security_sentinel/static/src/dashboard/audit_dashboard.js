@@ -7,6 +7,7 @@ import { loadBundle } from "@web/core/assets";
 import { Dialog } from "@web/core/dialog/dialog";
 import { KeepLast } from "@web/core/utils/concurrency";
 import { _t } from "@web/core/l10n/translation";
+import { user } from "@web/core/user";
 
 const REFRESH_DEFAULT = 60;
 
@@ -209,6 +210,8 @@ export class AuditDashboard extends Component {
 
         onWillStart(async () => {
             await loadBundle("web.chartjs_lib");
+            // MD-10: only Compliance Officers see configuration actions
+            this.isManager = await user.hasGroup("audit_security_sentinel.group_audit_manager");
             await this.loadDashboardData();
         });
 

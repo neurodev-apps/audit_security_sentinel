@@ -143,10 +143,12 @@
                                         <li><a class="dropdown-item" href="#" t-on-click.prevent="openAuditRules">
                                             <i class="fa fa-cog me-2"/>Configure Rules
                                         </a></li>
-                                        <li><hr class="dropdown-divider"/></li>
-                                        <li><a class="dropdown-item" href="#" t-on-click.prevent="openSettings">
-                                            <i class="fa fa-wrench me-2"/>Settings
-                                        </a></li>
+                                        <t t-if="isManager">
+                                            <li><hr class="dropdown-divider"/></li>
+                                            <li><a class="dropdown-item" href="#" t-on-click.prevent="openSettings">
+                                                <i class="fa fa-wrench me-2"/>Settings
+                                            </a></li>
+                                        </t>
                                     </ul>
                                 </div>
                             </div>

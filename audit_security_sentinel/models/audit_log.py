@@ -135,21 +135,20 @@ class AuditLog(models.Model):
         """Scheduled action: verify hash integrity of recent audit logs.
 
         Uses raw SQL for reading hashes (much faster for large datasets).
-        Processes logs from the last 7 days in batches of 1000.
+        Processes all audit logs in batches of 1000.
         Sends a summary to Compliance Officers via mail.message.
         """
         from .audit_hook import _get_audit_salt
 
-        date_from = fields.Datetime.now() - timedelta(days=7)
         salt = _get_audit_salt(self.env)
 
-        # Use raw SQL to fetch only the columns needed for hash verification
+        # MD-05: verify the FULL history, not just the last 7 days.
+        # Raw SQL + batched fetch keeps this efficient on large datasets.
         self.env.cr.execute("""
             SELECT id, user_id, model_model, res_id, create_date, details, hash
             FROM audit_log
-            WHERE create_date >= %s
             ORDER BY id ASC
-        """, (date_from,))
+        """)
 
         total = 0
         tampered_ids = []
@@ -190,7 +189,7 @@ class AuditLog(models.Model):
         if tampered_ids:
             body = _(
                 "<p><b>⚠ Security Sentinel — Integrity Check</b></p>"
-                "<p>Verified <b>%(total)s</b> logs from the last 7 days.</p>"
+                "<p>Verified <b>%(total)s</b> audit log(s).</p>"
                 "<p style='color:red;'><b>%(count)s tampered record(s) detected:</b> "
                 "IDs %(ids)s</p>"
                 "<p>Investigate immediately.</p>",
@@ -201,7 +200,7 @@ class AuditLog(models.Model):
         else:
             body = _(
                 "<p><b>✓ Security Sentinel — Integrity Check</b></p>"
-                "<p>Verified <b>%(total)s</b> logs from the last 7 days.</p>"
+                "<p>Verified <b>%(total)s</b> audit log(s).</p>"
                 "<p style='color:green;'>All records passed integrity verification.</p>",
                 total=total,
             )

@@ -41,6 +41,17 @@ class ResConfigSettings(models.TransientModel):
         help='Auto-refresh interval in seconds for the real-time audit dashboard.',
     )
 
+    # -- Trusted proxies (CR-03) --
+    audit_trusted_proxies = fields.Char(
+        string='Trusted Proxies',
+        config_parameter='audit_security_sentinel.trusted_proxies',
+        help=(
+            'Comma-separated list of proxy IPs allowed to set the client IP via '
+            'X-Forwarded-For / X-Real-IP headers. Leave empty to record only the '
+            'direct connection IP (recommended unless Odoo runs behind a proxy).'
+        ),
+    )
+
     # ----------------------------------------------------------------
     # Compute
     # ----------------------------------------------------------------
