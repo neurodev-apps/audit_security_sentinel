@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo.exceptions import UserError
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, new_test_user
 
 
 class TestAuditLogImmutability(TransactionCase):
@@ -15,16 +15,18 @@ class TestAuditLogImmutability(TransactionCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-        cls.audit_user = cls.env['res.users'].create({
-            'name': 'Test Audit User',
-            'login': 'test_audit_user@test.com',
-            'groups_id': [(4, cls.env.ref('audit_security_sentinel.group_audit_user').id)],
-        })
-        cls.audit_manager = cls.env['res.users'].create({
-            'name': 'Test Compliance Officer',
-            'login': 'test_compliance@test.com',
-            'groups_id': [(4, cls.env.ref('audit_security_sentinel.group_audit_manager').id)],
-        })
+        # new_test_user assigns groups by XML id, compatible across Odoo
+        # 17/18/19 (res.users.groups_id was renamed to group_ids in 19).
+        cls.audit_user = new_test_user(
+            cls.env, login='test_audit_user',
+            name='Test Audit User',
+            groups='audit_security_sentinel.group_audit_user',
+        )
+        cls.audit_manager = new_test_user(
+            cls.env, login='test_compliance',
+            name='Test Compliance Officer',
+            groups='audit_security_sentinel.group_audit_manager',
+        )
 
     def _create_test_log(self):
         """Helper: create a minimal audit.log record via sudo to bypass ACL."""
