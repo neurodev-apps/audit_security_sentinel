@@ -161,7 +161,8 @@ class AuditLogDashboard(models.Model):
                 'model_model': rec.model_model,
                 'name': rec.name,
                 'ip_address': rec.ip_address,
-                'details': rec.details,
+                # CR-07: only Compliance Officers receive change details.
+                'details': rec.details if is_manager else False,
                 'res_id': rec.res_id,
             })
 

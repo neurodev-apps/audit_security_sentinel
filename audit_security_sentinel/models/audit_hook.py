@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import hashlib
+import hmac
 import json
 import logging
 import secrets
@@ -15,6 +16,64 @@ _logger = logging.getLogger(__name__)
 # Salt cache keyed by DB name — multi-DB safe
 _salt_cache = {}
 _salt_lock = threading.Lock()
+
+# Marker stored in place of a sensitive field value (CR-01).
+REDACTED = '<redacted>'
+
+# Default substring patterns that flag a field name as sensitive (CR-01).
+# Extended at runtime with the comma-separated system parameter
+# ``audit_security_sentinel.sensitive_field_patterns``.
+DEFAULT_SENSITIVE_FIELD_PATTERNS = (
+    'password', 'passwd', 'token', 'secret', 'api_key', 'apikey',
+    'private_key', 'access_token', 'refresh_token', 'authorization',
+    'signature', 'bank', 'iban', 'card', 'account_number', 'cvv', 'cvc',
+)
+
+# Hash algorithm versions stored on each audit.log record (CR-02).
+#   None / 1 -> legacy salted SHA-256 (records created before 2.1.5)
+#   2        -> HMAC-SHA256 over the full payload + previous_hash (chained)
+HASH_VERSION_HMAC_CHAIN = 2
+
+# Fixed key used for the PostgreSQL advisory lock that serialises hash-chain
+# writes so concurrent transactions never fork the chain (CR-02).
+_CHAIN_LOCK_KEY = 8245723109
+
+
+def _build_hash_payload_v2(fields):
+    """Build the canonical JSON payload hashed by the v2 algorithm (CR-02).
+
+    Centralised so the creation path, ``_recompute_hash``, the integrity cron
+    and the report wizard all produce byte-for-byte identical payloads.
+
+    ``company_id`` is normalised to ``int`` or ``False`` (never ``None``) so a
+    log created through the ORM and one read back via raw SQL hash identically.
+    """
+    company_id = fields.get('company_id')
+    return json.dumps(
+        {
+            'user_id': fields.get('user_id'),
+            'model_model': fields.get('model_model') or '',
+            'res_id': fields.get('res_id'),
+            'name': fields.get('name') or '',
+            'action_type': fields.get('action_type') or '',
+            'ip_address': fields.get('ip_address') or '',
+            'company_id': company_id or False,
+            'create_date': fields.get('create_date') or '',
+            'details': fields.get('details') or '',
+            'previous_hash': fields.get('previous_hash') or '',
+        },
+        sort_keys=True,
+        ensure_ascii=False,
+        default=str,
+    )
+
+
+def _compute_audit_hash_v2(secret, fields):
+    """Return the HMAC-SHA256 of the v2 payload keyed with ``secret`` (CR-02)."""
+    payload = _build_hash_payload_v2(fields)
+    return hmac.new(
+        secret.encode('utf-8'), payload.encode('utf-8'), hashlib.sha256
+    ).hexdigest()
 
 # References to original BaseModel methods — stored at module level
 # so the uninstall_hook can restore them cleanly.
@@ -99,6 +158,12 @@ class BaseModelAuditHook(models.AbstractModel):
         Caches a plain dict (not a recordset) to avoid stale cursor issues
         when the cache is read across different transactions.  Access is
         serialised with ``_rules_lock`` for thread safety.
+
+        The ORM search only flushes ``audit.rule`` and the fields in its domain
+        (it is selective, never global), so it does NOT flush the caller's
+        pending records. The premature *global* flush that used to break core
+        tests came from the surrounding ``cr.savepoint()`` default of
+        ``flush=True`` — the callers now use ``flush=False`` (CR-04).
         """
         now = datetime.now()
         dbname = self.env.cr.dbname
@@ -223,43 +288,94 @@ class BaseModelAuditHook(models.AbstractModel):
             return '<binary data>'
         return value
 
+    def _get_sensitive_field_patterns(self):
+        """Return the active set of sensitive-field substring patterns (CR-01).
+
+        Combines the built-in defaults with the optional comma-separated
+        ``audit_security_sentinel.sensitive_field_patterns`` system parameter
+        so each deployment can extend the blacklist without code changes.
+        """
+        patterns = set(DEFAULT_SENSITIVE_FIELD_PATTERNS)
+        try:
+            extra = self.env['ir.config_parameter'].sudo().get_param(
+                'audit_security_sentinel.sensitive_field_patterns', ''
+            )
+            patterns.update(p.strip().lower() for p in extra.split(',') if p.strip())
+        except Exception:
+            pass
+        return patterns
+
+    def _is_sensitive_field(self, field_name, patterns=None):
+        """True if ``field_name`` matches any sensitive pattern (CR-01)."""
+        if patterns is None:
+            patterns = self._get_sensitive_field_patterns()
+        name = (field_name or '').lower()
+        return any(pattern in name for pattern in patterns)
+
     def _create_audit_log(self, action_type, model_name, res_id, name, details_dict, company_id=None):
-        """Create an audit log entry with a SHA-256 integrity hash.
+        """Create an audit log entry with a chained HMAC integrity hash (CR-02).
 
         The hash is computed AFTER the ORM create so we use the actual
         ``create_date`` stored in the database, guaranteeing that
         ``_recompute_hash`` (and the integrity cron) always reproduce the
         same value.
 
-        All DB operations run inside a savepoint so that a failure here
-        never leaves the cursor in InFailedSqlTransaction state — which
+        A transaction-level PostgreSQL advisory lock serialises the read of the
+        previous hash and the insert so concurrent transactions never fork the
+        hash chain. All DB operations run inside a savepoint so that a failure
+        here never leaves the cursor in InFailedSqlTransaction state — which
         would corrupt the caller's business transaction.
         """
         try:
             with self.env.cr.savepoint():
                 details_json = json.dumps(details_dict, ensure_ascii=False, default=str)
                 user_id = self.env.uid or SUPERUSER_ID
+                ip_address = self._get_ip_address()
                 # CR-09: use the affected record's company; fall back to env.company
                 if company_id is None:
                     company_id = self.env.company.id if self.env.company else False
 
-                # Step 1 — create the record without a hash first
+                # Serialise chain writes and read the tail hash atomically so
+                # concurrent transactions cannot link to the same predecessor.
+                self.env.cr.execute('SELECT pg_advisory_xact_lock(%s)', (_CHAIN_LOCK_KEY,))
+                self.env.cr.execute('SELECT hash FROM audit_log ORDER BY id DESC LIMIT 1')
+                row = self.env.cr.fetchone()
+                previous_hash = (row[0] if row else '') or ''
+
+                # Step 1 — create the record without its own hash first
                 record = self.env['audit.log'].sudo().create({
                     'user_id': user_id,
                     'name': name or f'{model_name},{res_id}',
                     'model_model': model_name,
                     'res_id': res_id,
-                    'ip_address': self._get_ip_address(),
+                    'ip_address': ip_address,
                     'action_type': action_type,
                     'details': details_json,
                     'hash': '',
+                    'previous_hash': previous_hash,
+                    'hash_version': HASH_VERSION_HMAC_CHAIN,
                     'company_id': company_id,
                 })
 
-                # Step 2 — compute hash using the real create_date from the DB
-                audit_hash = self._generate_audit_hash(
-                    user_id, model_name, res_id, record.create_date, details_json
+                # Step 2 — HMAC over the full payload (CR-02) using the real
+                # create_date and stored name from the DB.
+                secret = _get_audit_salt(self.env)
+                create_date_str = (
+                    record.create_date.strftime('%Y-%m-%d %H:%M:%S')
+                    if record.create_date else ''
                 )
+                audit_hash = _compute_audit_hash_v2(secret, {
+                    'user_id': user_id,
+                    'model_model': model_name,
+                    'res_id': res_id,
+                    'name': record.name,
+                    'action_type': action_type,
+                    'ip_address': ip_address,
+                    'company_id': company_id,
+                    'create_date': create_date_str,
+                    'details': details_json,
+                    'previous_hash': previous_hash,
+                })
 
                 # Step 3 — write hash using context flag to bypass immutability check
                 record.with_context(_audit_hash_update=True).write({'hash': audit_hash})
@@ -284,6 +400,8 @@ class BaseModelExtended(models.AbstractModel):
         AuditHook = self.env['base.model.audit.hook']
         # CR-10: honour log_field_ids on create, exactly like write does.
         monitored_fields = rule['field_names'] if isinstance(rule, dict) else rule.get_monitored_fields()
+        # CR-01: resolve sensitive patterns once per batch.
+        sensitive_patterns = AuditHook._get_sensitive_field_patterns()
 
         for idx, record in enumerate(self):
             details = {
@@ -305,6 +423,9 @@ class BaseModelExtended(models.AbstractModel):
                     field_value = record[field_name]
                     serialized = AuditHook._serialize_value(field_value)
                     if serialized is not None:
+                        # CR-01: never store sensitive values in clear text.
+                        if AuditHook._is_sensitive_field(field_name, sensitive_patterns):
+                            serialized = REDACTED
                         details['new_values'][field_name] = serialized
                 except Exception:
                     continue
@@ -323,6 +444,8 @@ class BaseModelExtended(models.AbstractModel):
         """Log modification of records."""
         AuditHook = self.env['base.model.audit.hook']
         monitored_fields = rule['field_names'] if isinstance(rule, dict) else rule.get_monitored_fields()
+        # CR-01: resolve sensitive patterns once per batch.
+        sensitive_patterns = AuditHook._get_sensitive_field_patterns()
 
         for record in self:
             if record.id not in old_values:
@@ -349,10 +472,15 @@ class BaseModelExtended(models.AbstractModel):
 
                     # Only log if value actually changed
                     if old_serialized != new_serialized:
-                        changes[field_name] = {
-                            'old': old_serialized,
-                            'new': new_serialized,
-                        }
+                        # CR-01: record that a sensitive field changed without
+                        # exposing either value.
+                        if AuditHook._is_sensitive_field(field_name, sensitive_patterns):
+                            changes[field_name] = {'old': REDACTED, 'new': REDACTED}
+                        else:
+                            changes[field_name] = {
+                                'old': old_serialized,
+                                'new': new_serialized,
+                            }
                 except Exception as e:
                     _logger.debug("Could not compare field %s: %s", field_name, e)
                     continue
@@ -376,6 +504,8 @@ class BaseModelExtended(models.AbstractModel):
     def _audit_unlink(self, rule):
         """Log deletion of records."""
         AuditHook = self.env['base.model.audit.hook']
+        # CR-01: resolve sensitive patterns once per batch.
+        sensitive_patterns = AuditHook._get_sensitive_field_patterns()
 
         for record in self:
             details = {
@@ -394,6 +524,9 @@ class BaseModelExtended(models.AbstractModel):
                         val = record[field_name]
                         serialized = AuditHook._serialize_value(val)
                         if serialized is not None:
+                            # CR-01: never store sensitive values in clear text.
+                            if AuditHook._is_sensitive_field(field_name, sensitive_patterns):
+                                serialized = REDACTED
                             deleted_values[field_name] = serialized
                     except Exception:
                         continue
@@ -446,7 +579,10 @@ def install_audit_hooks():
         # Check for active audit rule (savepoint-protected)
         rule = None
         try:
-            with self.env.cr.savepoint():
+            # flush=False: the rule lookup must NOT force a global flush of the
+            # caller's pending records, which would change constraint and
+            # notification timing in unrelated modules (CR-04).
+            with self.env.cr.savepoint(flush=False):
                 AuditHook = self.env['base.model.audit.hook']
                 rule = AuditHook._get_audit_rule(self._name)
         except Exception:
@@ -480,7 +616,10 @@ def install_audit_hooks():
         # Check for active audit rule (savepoint-protected)
         rule = None
         try:
-            with self.env.cr.savepoint():
+            # flush=False: the rule lookup must NOT force a global flush of the
+            # caller's pending records, which would change constraint and
+            # notification timing in unrelated modules (CR-04).
+            with self.env.cr.savepoint(flush=False):
                 AuditHook = self.env['base.model.audit.hook']
                 rule = AuditHook._get_audit_rule(self._name)
         except Exception:
@@ -536,7 +675,10 @@ def install_audit_hooks():
         # Check for active audit rule (savepoint-protected)
         rule = None
         try:
-            with self.env.cr.savepoint():
+            # flush=False: the rule lookup must NOT force a global flush of the
+            # caller's pending records, which would change constraint and
+            # notification timing in unrelated modules (CR-04).
+            with self.env.cr.savepoint(flush=False):
                 AuditHook = self.env['base.model.audit.hook']
                 rule = AuditHook._get_audit_rule(self._name)
         except Exception:
