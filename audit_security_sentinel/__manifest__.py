@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Odoo 19 Security Sentinel: Anti-Fraud & Audit Log',
-    'version': '19.0.2.1.4',
+    'version': '19.0.2.1.5',
     'category': 'Security',
-    'summary': 'Immutable SHA-256 audit logging, real-time OWL dashboard, compliance reports, role-based security & automated integrity verification',
+    'summary': 'Immutable chained HMAC-SHA256 audit logging, sensitive-data masking, role-based detail access, real-time OWL dashboard, compliance reports & automated integrity verification',
     'description': """
 Odoo 19 Security Sentinel — Anti-Fraud & Immutable Audit Log
 =============================================================
@@ -11,13 +11,13 @@ Odoo 19 Security Sentinel — Anti-Fraud & Immutable Audit Log
 Enterprise-grade security module for Odoo 19:
 
 * **Real-time OWL Dashboard** — live KPIs, Chart.js charts, action breakdown, risk indicators
-* **Immutable Audit Logs** — every create/write/delete sealed with SHA-256 hash
-* **Automated Integrity Verification** — weekly cron recalculates hashes and alerts on tampering
+* **Tamper-Evident Audit Logs** — every create/write/delete sealed with a chained HMAC-SHA256 hash covering user, action, IP, company, resource and details
+* **Sensitive-Data Masking** — passwords, tokens, API keys, IBAN/card numbers and other secrets are stored as <redacted>, never in clear text
+* **Automated Integrity Verification** — cron recalculates the full hash chain and alerts on tampering, deletion or reordering of any record
 * **Compliance Reports** — export audit data to PDF or Excel with one click
-* **Role-Based Access** — Audit User (read-only) and Compliance Officer (full config)
-* **IP Address Tracking** — captures client IP with proxy header support
+* **Role-Based Access** — Audit User sees metadata only; change details and detailed exports are restricted to the Compliance Officer
+* **IP Address Tracking** — captures client IP with trusted-proxy header support
 * **Configurable Rules** — choose models and fields to monitor
-* **Detailed Change History** — old/new value diffs for every modification
 
 Audit logs are read-only and cannot be modified. Deletion is blocked by default;
 an optional retention policy can purge logs older than a configured period, and

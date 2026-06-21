@@ -74,7 +74,20 @@ class AuditLog(models.Model):
     hash = fields.Char(
         string='Integrity Hash',
         readonly=True,
-        help='SHA-256 hash for integrity verification',
+        help='Integrity hash of this entry (HMAC-SHA256 over the full payload, '
+             'chained to the previous entry for v2 records).',
+    )
+    previous_hash = fields.Char(
+        string='Previous Hash',
+        readonly=True,
+        help='Integrity hash of the preceding audit log entry. Links the chain '
+             'so that deleting or reordering an intermediate record is detected (CR-02).',
+    )
+    hash_version = fields.Integer(
+        string='Hash Version',
+        readonly=True,
+        help='Integrity algorithm version. Empty/1 = legacy salted SHA-256; '
+             '2 = chained HMAC-SHA256 over the full payload.',
     )
 
     def init(self):
@@ -93,7 +106,15 @@ class AuditLog(models.Model):
         """)
 
     def unlink(self):
-        """Prevent deletion of audit logs to maintain immutability."""
+        """Prevent deletion of audit logs to maintain immutability.
+
+        An unlink on an empty recordset is a legitimate no-op: Odoo itself and
+        other modules call ``model.browse().unlink()`` generically over every
+        model. Only block the operation when there is actually something to
+        delete, so the immutability guard never breaks unrelated code.
+        """
+        if not self:
+            return True
         raise UserError(_('Audit logs cannot be deleted. They are immutable for security purposes.'))
 
     def copy(self, default=None):
@@ -116,17 +137,38 @@ class AuditLog(models.Model):
         return super().create(vals_list)
 
     def _recompute_hash(self):
-        """Recompute SHA-256 hash for a single log record using the same
-        algorithm as ``audit_hook._generate_audit_hash``."""
-        from .audit_hook import _get_audit_salt
+        """Recompute the integrity hash of a single log using the algorithm
+        recorded in ``hash_version`` (CR-02).
+
+        Version 2 reproduces the chained HMAC-SHA256 over the full payload;
+        legacy records (version empty/1) reproduce the original salted SHA-256
+        so the historical records keep verifying after the upgrade to 2.1.5.
+        Note: this checks the record's own hash, not the chain link — the chain
+        is verified by ``_cron_verify_integrity`` / the report wizard.
+        """
+        from .audit_hook import _get_audit_salt, _compute_audit_hash_v2
         self.ensure_one()
-        salt = _get_audit_salt(self.env)
+        secret = _get_audit_salt(self.env)
         create_date_str = (
             self.create_date.strftime('%Y-%m-%d %H:%M:%S') if self.create_date else ''
         )
+        if (self.hash_version or 1) >= 2:
+            return _compute_audit_hash_v2(secret, {
+                'user_id': self.user_id.id,
+                'model_model': self.model_model,
+                'res_id': self.res_id,
+                'name': self.name,
+                'action_type': self.action_type,
+                'ip_address': self.ip_address,
+                'company_id': self.company_id.id if self.company_id else False,
+                'create_date': create_date_str,
+                'details': self.details,
+                'previous_hash': self.previous_hash,
+            })
+        # Legacy v1 salted SHA-256
         hash_string = (
             f"{self.user_id.id}|{self.model_model}|{self.res_id}"
-            f"|{create_date_str}|{self.details}|{salt}"
+            f"|{create_date_str}|{self.details}|{secret}"
         )
         return hashlib.sha256(hash_string.encode('utf-8')).hexdigest()
 
@@ -138,14 +180,16 @@ class AuditLog(models.Model):
         Processes all audit logs in batches of 1000.
         Sends a summary to Compliance Officers via mail.message.
         """
-        from .audit_hook import _get_audit_salt
+        from .audit_hook import _get_audit_salt, _compute_audit_hash_v2
 
-        salt = _get_audit_salt(self.env)
+        secret = _get_audit_salt(self.env)
 
         # MD-05: verify the FULL history, not just the last 7 days.
         # Raw SQL + batched fetch keeps this efficient on large datasets.
+        # CR-02: fetch every field covered by the v2 payload + the chain link.
         self.env.cr.execute("""
-            SELECT id, user_id, model_model, res_id, create_date, details, hash
+            SELECT id, user_id, model_model, res_id, create_date, details, hash,
+                   name, action_type, ip_address, company_id, previous_hash, hash_version
             FROM audit_log
             ORDER BY id ASC
         """)
@@ -153,6 +197,7 @@ class AuditLog(models.Model):
         total = 0
         tampered_ids = []
         BATCH = 1000
+        prev_stored_hash = ''  # hash of the preceding row — used for the chain check
 
         while True:
             rows = self.env.cr.fetchmany(BATCH)
@@ -160,19 +205,50 @@ class AuditLog(models.Model):
                 break
             total += len(rows)
             for row in rows:
-                log_id, user_id, model_model, res_id, create_date, details, stored_hash = row
+                (log_id, user_id, model_model, res_id, create_date, details, stored_hash,
+                 name, action_type, ip_address, company_id, previous_hash, hash_version) = row
                 create_date_str = create_date.strftime('%Y-%m-%d %H:%M:%S') if create_date else ''
-                hash_string = "%s|%s|%s|%s|%s|%s" % (
-                    user_id, model_model, res_id, create_date_str, details, salt,
-                )
-                expected = hashlib.sha256(hash_string.encode('utf-8')).hexdigest()
+                tampered = False
+                reason = ''
+
+                if (hash_version or 1) >= 2:
+                    expected = _compute_audit_hash_v2(secret, {
+                        'user_id': user_id,
+                        'model_model': model_model,
+                        'res_id': res_id,
+                        'name': name,
+                        'action_type': action_type,
+                        'ip_address': ip_address,
+                        'company_id': company_id,
+                        'create_date': create_date_str,
+                        'details': details,
+                        'previous_hash': previous_hash,
+                    })
+                    # Chain link: previous_hash must equal the prior row's hash.
+                    # A break means an intermediate record was deleted, inserted
+                    # or reordered (CR-02, AC-05).
+                    if (previous_hash or '') != (prev_stored_hash or ''):
+                        tampered = True
+                        reason = 'chain'
+                else:
+                    hash_string = "%s|%s|%s|%s|%s|%s" % (
+                        user_id, model_model, res_id, create_date_str, details, secret,
+                    )
+                    expected = hashlib.sha256(hash_string.encode('utf-8')).hexdigest()
+
                 if stored_hash != expected:
+                    tampered = True
+                    reason = (reason + '+hash') if reason else 'hash'
+
+                if tampered:
                     tampered_ids.append(log_id)
                     _logger.warning(
-                        "INTEGRITY ALERT: audit.log id=%s hash mismatch "
+                        "INTEGRITY ALERT: audit.log id=%s %s mismatch "
                         "(stored=%s, expected=%s)",
-                        log_id, stored_hash, expected,
+                        log_id, reason, stored_hash, expected,
                     )
+
+                prev_stored_hash = stored_hash
 
         # Persist results for the dashboard
         ICP = self.env['ir.config_parameter'].sudo()

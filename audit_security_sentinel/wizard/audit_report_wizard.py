@@ -163,6 +163,19 @@ class AuditReportWizard(models.TransientModel):
             ))
         return self.env['audit.log'].sudo().search(domain, order='create_date desc')
 
+    def _effective_include_details(self):
+        """CR-07: only Compliance Officers may export change details.
+
+        Defence in depth — the wizard field is already hidden from Audit Users
+        in the view, but a request could still arrive via RPC with
+        ``include_details=True``. This is the single source of truth used by
+        both exporters.
+        """
+        self.ensure_one()
+        return bool(self.include_details) and self.env.user.has_group(
+            'audit_security_sentinel.group_audit_manager'
+        )
+
     # -------------------------------------------------------------------------
     # Summary statistics
     # -------------------------------------------------------------------------
@@ -205,22 +218,20 @@ class AuditReportWizard(models.TransientModel):
     def _verify_integrity(self, logs):
         """Verify hash integrity for a set of logs.
 
+        Uses the per-record algorithm via ``_recompute_hash`` (v1 legacy
+        SHA-256 or v2 HMAC over the full payload). The full chain-link check —
+        which also detects deleted/reordered records — runs over the complete
+        table in ``audit.log._cron_verify_integrity``; here the report only
+        checks the own hashes of the filtered records.
+
         Returns a dict with keys: total_checked, passed, failed, failed_ids.
         """
-        AuditHook = self.env['base.model.audit.hook']
         total = len(logs)
         failed_ids = []
 
         for log in logs:
             try:
-                expected = AuditHook._generate_audit_hash(
-                    log.user_id.id,
-                    log.model_model,
-                    log.res_id,
-                    log.create_date,
-                    log.details,
-                )
-                if log.hash != expected:
+                if log.hash != log._recompute_hash():
                     failed_ids.append(log.id)
             except Exception:
                 # If hash verification fails entirely, flag it
@@ -249,6 +260,7 @@ class AuditReportWizard(models.TransientModel):
         logs = self._get_logs()
         summary = self._compute_summary(logs)
         integrity = self._verify_integrity(logs)
+        inc_details = self._effective_include_details()  # CR-07
 
         buffer = io.BytesIO()
         # strings_to_formulas/urls=False prevents formula/CSV injection (CR-08):
@@ -375,7 +387,7 @@ class AuditReportWizard(models.TransientModel):
             (_('Resource ID'), 12),
             (_('IP Address'), 16),
         ]
-        if self.include_details:
+        if inc_details:
             headers.append((_('Details'), 60))
 
         for col, (header, width) in enumerate(headers):
@@ -403,7 +415,7 @@ class AuditReportWizard(models.TransientModel):
             ws_logs.write_string(row_idx, 4, log.name or '', fmt_cell)
             ws_logs.write(row_idx, 5, log.res_id or 0, fmt_number)
             ws_logs.write_string(row_idx, 6, log.ip_address or '', fmt_cell)
-            if self.include_details:
+            if inc_details:
                 details_str = ''
                 if log.details:
                     try:
@@ -501,6 +513,7 @@ class AuditReportWizard(models.TransientModel):
         logs = self._get_logs()
         summary = self._compute_summary(logs)
         integrity = self._verify_integrity(logs)
+        inc_details = self._effective_include_details()  # CR-07
 
         # Store data in context for the report template
         data = {
@@ -510,7 +523,7 @@ class AuditReportWizard(models.TransientModel):
             'company_name': self.env.company.name,
             'summary': summary,
             'integrity': integrity,
-            'include_details': self.include_details,
+            'include_details': inc_details,
             'logs': [{
                 'create_date': fields.Datetime.context_timestamp(
                     self, log.create_date
@@ -523,7 +536,9 @@ class AuditReportWizard(models.TransientModel):
                 'name': log.name or '',
                 'res_id': log.res_id or 0,
                 'ip_address': log.ip_address or '',
-                'details': log.details or '',
+                # CR-07: never ship details in the payload unless the officer asked
+                # for them and is allowed to receive them.
+                'details': (log.details or '') if inc_details else '',
             } for log in logs[:500]],  # Limit to 500 for PDF readability
             'total_logs': len(logs),
             'logs_truncated': len(logs) > 500,

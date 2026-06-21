@@ -23,13 +23,13 @@ class ResConfigSettings(models.TransientModel):
         ),
     )
 
-    # -- Hash salt (display only) --
+    # -- HMAC key (display only) --
     audit_hash_salt_display = fields.Char(
-        string='Current Hash Salt',
+        string='Current HMAC Key',
         compute='_compute_audit_hash_salt_display',
         help=(
-            'First 8 characters of the active hash salt, shown for '
-            'verification purposes. The full salt is never exposed.'
+            'First 8 characters of the active HMAC key used for the integrity '
+            'hashes, shown for verification purposes. The full key is never exposed.'
         ),
     )
 
@@ -49,6 +49,18 @@ class ResConfigSettings(models.TransientModel):
             'Comma-separated list of proxy IPs allowed to set the client IP via '
             'X-Forwarded-For / X-Real-IP headers. Leave empty to record only the '
             'direct connection IP (recommended unless Odoo runs behind a proxy).'
+        ),
+    )
+
+    # -- Sensitive field masking (CR-01) --
+    audit_sensitive_field_patterns = fields.Char(
+        string='Extra Sensitive Field Patterns',
+        config_parameter='audit_security_sentinel.sensitive_field_patterns',
+        help=(
+            'Comma-separated extra substrings that flag a field name as sensitive. '
+            'Matching values are stored as <redacted> in the audit log, dashboard '
+            'and reports. These add to the built-in list (password, token, secret, '
+            'api_key, private_key, iban, card, account_number, ...).'
         ),
     )
 
