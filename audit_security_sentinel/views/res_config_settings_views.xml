@@ -39,11 +39,21 @@
                                 </div>
                             </div>
                         </setting>
+                        <setting
+                            string="Sensitive Field Masking"
+                            help="Extra comma-separated substrings that flag a field as sensitive. Matching values are stored as &lt;redacted&gt;. Adds to the built-in list (password, token, secret, api_key, iban, card, ...).">
+                            <div class="content-group">
+                                <div class="row mt-2">
+                                    <label for="audit_sensitive_field_patterns" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_sensitive_field_patterns" class="col-lg-6"/>
+                                </div>
+                            </div>
+                        </setting>
                     </block>
                     <block title="Integrity &amp; Cryptography" name="audit_integrity_settings">
                         <setting
-                            string="Hash Salt Verification"
-                            help="Preview of the active cryptographic salt used for SHA-256 integrity hashes. The full salt is never displayed.">
+                            string="HMAC Key Verification"
+                            help="Preview of the active HMAC key used for the HMAC-SHA256 integrity hashes. The full key is never displayed.">
                             <div class="content-group">
                                 <div class="row mt-2">
                                     <label for="audit_hash_salt_display" class="col-lg-4 o_light_label"/>

@@ -41,9 +41,13 @@
                             <field name="name"/>
                             <field name="res_id"/>
                             <field name="hash"/>
+                            <field name="hash_version" groups="audit_security_sentinel.group_audit_manager"/>
+                            <field name="previous_hash" groups="audit_security_sentinel.group_audit_manager"/>
                         </group>
                     </group>
-                    <group string="Change Details">
+                    <!-- CR-07: change details are restricted to Compliance Officers.
+                         Audit Users only see metadata above. -->
+                    <group string="Change Details" groups="audit_security_sentinel.group_audit_manager">
                         <field name="details" nolabel="1" widget="text"/>
                     </group>
                 </sheet>

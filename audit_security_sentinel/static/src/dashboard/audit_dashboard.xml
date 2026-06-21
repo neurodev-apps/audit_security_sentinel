@@ -427,7 +427,8 @@
                                                             <t t-esc="log.ip_address || '-'"/>
                                                         </td>
                                                         <td class="text-center">
-                                                            <button class="btn btn-sm btn-link p-0 me-1"
+                                                            <!-- CR-07: change-detail dialog is for Compliance Officers only -->
+                                                            <button t-if="isManager" class="btn btn-sm btn-link p-0 me-1"
                                                                     t-on-click="() => this.openLogDetail(log)"
                                                                     title="View change details">
                                                                 <i class="fa fa-eye"/>
