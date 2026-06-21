@@ -12,7 +12,7 @@ Covers the report's acceptance criteria:
 
 import json
 
-from odoo.tests.common import TransactionCase
+from odoo.tests.common import TransactionCase, new_test_user
 
 
 class _AuditGroupCBase(TransactionCase):
@@ -30,16 +30,18 @@ class _AuditGroupCBase(TransactionCase):
             'log_write': True,
             'log_unlink': True,
         })
-        cls.audit_user = cls.env['res.users'].create({
-            'name': 'GroupC Audit User',
-            'login': 'groupc_audit_user@test.com',
-            'groups_id': [(4, cls.env.ref('audit_security_sentinel.group_audit_user').id)],
-        })
-        cls.audit_manager = cls.env['res.users'].create({
-            'name': 'GroupC Compliance Officer',
-            'login': 'groupc_compliance@test.com',
-            'groups_id': [(4, cls.env.ref('audit_security_sentinel.group_audit_manager').id)],
-        })
+        # new_test_user assigns groups by XML id, compatible across Odoo
+        # 17/18/19 (res.users.groups_id was renamed to group_ids in 19).
+        cls.audit_user = new_test_user(
+            cls.env, login='groupc_audit_user',
+            name='GroupC Audit User',
+            groups='audit_security_sentinel.group_audit_user',
+        )
+        cls.audit_manager = new_test_user(
+            cls.env, login='groupc_compliance',
+            name='GroupC Compliance Officer',
+            groups='audit_security_sentinel.group_audit_manager',
+        )
         cls._reset_rule_cache()
 
     @classmethod
