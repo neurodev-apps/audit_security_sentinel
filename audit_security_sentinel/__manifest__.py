@@ -27,7 +27,7 @@ only when a Compliance Officer explicitly enables it.
     'website': 'https://neurodev.cl',
     'support': 'contacto@neurodev.cl',
     'license': 'OPL-1',
-    'price': 159.00,
+    'price': 199.00,
     'currency': 'USD',
     'images': ['static/description/banner.png'],
     'depends': [
