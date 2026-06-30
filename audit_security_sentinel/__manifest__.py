@@ -29,7 +29,7 @@ only when a Compliance Officer explicitly enables it.
     'license': 'OPL-1',
     'price': 249.00,
     'currency': 'USD',
-    'images': ['static/description/banner.png'],
+    'images': ['static/description/banner.gif'],
     'depends': [
         'base',
         'mail',
