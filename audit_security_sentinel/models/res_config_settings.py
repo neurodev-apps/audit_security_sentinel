@@ -4,7 +4,7 @@ import logging
 import secrets
 
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError
+from odoo.exceptions import AccessError, UserError
 
 _logger = logging.getLogger(__name__)
 
@@ -64,9 +64,74 @@ class ResConfigSettings(models.TransientModel):
         ),
     )
 
+    # -- External integrity anchoring --
+    audit_anchor_enabled = fields.Boolean(
+        string='External Integrity Anchoring',
+        config_parameter='audit_security_sentinel.anchor_enabled',
+        help=(
+            'Periodically certify the tip of the audit chain on an external '
+            'custody service. The HMAC key lives in this database, so anyone '
+            'with direct PostgreSQL access could rewrite an entry and recompute '
+            'the whole chain. An external anchor cannot be rewritten from here, '
+            'so the tampering becomes detectable. No log content is transmitted, '
+            'only the last entry ID, its hash and the record count.'
+        ),
+    )
+    audit_anchor_url = fields.Char(
+        string='Custody Service URL',
+        default='https://www.neurodev.cl/sentinel',
+        config_parameter='audit_security_sentinel.anchor_url',
+        help='Base URL of the integrity custody service.',
+    )
+    audit_anchor_instance_display = fields.Char(
+        string='Registered Instance',
+        compute='_compute_audit_anchor_status',
+    )
+    audit_anchor_status_display = fields.Char(
+        string='Anchor Status',
+        compute='_compute_audit_anchor_status',
+    )
+
     # ----------------------------------------------------------------
     # Compute
     # ----------------------------------------------------------------
+    @api.depends_context('uid')
+    def _compute_audit_anchor_status(self):
+        """Show enrolment state and last anchor without exposing the secret."""
+        ICP = self.env['ir.config_parameter'].sudo()
+        uuid = ICP.get_param('audit_security_sentinel.anchor_instance_uuid', default='')
+        health = self.env['audit.anchor'].sudo()._get_anchor_health()
+
+        if not uuid:
+            instance = _('Not registered')
+            status = _('Register this instance to start anchoring.')
+        else:
+            instance = f"{uuid[:8]}..."
+            if not health['last_anchor']:
+                status = _('Registered. No anchor sent yet.')
+            elif health['alerts']:
+                status = _(
+                    'Last anchor %(date)s. %(alerts)s integrity alert(s) recorded.',
+                    date=health['last_anchor'], alerts=health['alerts'],
+                )
+            elif health['pending']:
+                status = _(
+                    'Last anchor %(date)s. %(pending)s pending delivery '
+                    '(deferred anchoring).',
+                    date=health['last_anchor'], pending=health['pending'],
+                )
+            elif health['stale']:
+                status = _(
+                    'Last anchor %(date)s. No signal for over 2 hours.',
+                    date=health['last_anchor'],
+                )
+            else:
+                status = _('Last anchor %(date)s. Chain certified.', date=health['last_anchor'])
+
+        for record in self:
+            record.audit_anchor_instance_display = instance
+            record.audit_anchor_status_display = status
+
     @api.depends_context('uid')
     def _compute_audit_hash_salt_display(self):
         """Show a masked preview of the hash salt for verification."""
@@ -79,6 +144,72 @@ class ResConfigSettings(models.TransientModel):
     # ----------------------------------------------------------------
     # Actions
     # ----------------------------------------------------------------
+    def action_register_anchor(self):
+        """Enrol this instance with the custody service and turn anchoring on.
+
+        Self-service on purpose: the module is installed unattended from the
+        Odoo Apps Store, so enrolment must never require touching the server.
+        """
+        self.ensure_one()
+        if not self.env.user.has_group('audit_security_sentinel.group_audit_manager'):
+            raise AccessError(_('Only Compliance Officers can register the instance.'))
+
+        self.env['audit.anchor'].sudo()._register_instance(
+            contact_email=self.env.user.email or '',
+        )
+
+        # Turn the anchoring cron on. It ships disabled so that installing the
+        # module never sends anything outbound without an explicit decision.
+        cron = self.env.ref(
+            'audit_security_sentinel.ir_cron_send_anchor', raise_if_not_found=False
+        )
+        if cron:
+            cron.sudo().active = True
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Instance Registered'),
+                'message': _(
+                    'External integrity anchoring is active. The chain tip will '
+                    'be certified every 15 minutes.'
+                ),
+                'type': 'success',
+                'sticky': False,
+                'next': {'type': 'ir.actions.act_window_close'},
+            },
+        }
+
+    def action_send_anchor_now(self):
+        """Send an anchor immediately instead of waiting for the cron."""
+        self.ensure_one()
+        if not self.env.user.has_group('audit_security_sentinel.group_audit_manager'):
+            raise AccessError(_('Only Compliance Officers can send an anchor.'))
+
+        anchor = self.env['audit.anchor'].sudo()._cron_send_anchor()
+        if not anchor:
+            raise UserError(_(
+                'Anchoring is disabled or this instance is not registered yet.'
+            ))
+        if anchor.state == 'failed':
+            raise UserError(_(
+                'The anchor could not be delivered: %s', anchor.error_message or '',
+            ))
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': _('Anchor Sent'),
+                'message': _(
+                    'Chain tip certified: %(count)s entries, last ID %(last)s.',
+                    count=anchor.event_count, last=anchor.last_log_id,
+                ),
+                'type': 'success',
+                'sticky': False,
+            },
+        }
+
     def action_regenerate_salt(self):
         """Generate a new cryptographic salt and store it in system parameters.
 

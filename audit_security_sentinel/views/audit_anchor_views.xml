@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Anchor List View -->
+    <record id="view_audit_anchor_tree" model="ir.ui.view">
+        <field name="name">audit.anchor.tree</field>
+        <field name="model">audit.anchor</field>
+        <field name="arch" type="xml">
+            <list string="Integrity Anchors" create="0" edit="0" delete="0"
+                  decoration-danger="local_alert != False"
+                  decoration-warning="state in ('failed', 'deferred')"
+                  decoration-muted="is_heartbeat and not local_alert">
+                <field name="create_date" string="Date"/>
+                <field name="event_count"/>
+                <field name="last_log_id"/>
+                <field name="chain_hash" widget="char" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'confirmed'"
+                       decoration-warning="state in ('pending', 'deferred')"
+                       decoration-danger="state == 'failed'"/>
+                <field name="is_heartbeat" optional="hide"/>
+                <field name="local_alert" optional="show"/>
+                <field name="sent_at" optional="hide"/>
+                <field name="first_log_id" optional="hide"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Anchor Form View -->
+    <record id="view_audit_anchor_form" model="ir.ui.view">
+        <field name="name">audit.anchor.form</field>
+        <field name="model">audit.anchor</field>
+        <field name="arch" type="xml">
+            <form string="Integrity Anchor" create="0" edit="0" delete="0">
+                <sheet>
+                    <div class="alert alert-danger" role="alert" invisible="not local_alert">
+                        <strong>Integrity alert:</strong>
+                        <field name="local_alert" readonly="1" nolabel="1"/>
+                    </div>
+                    <group>
+                        <group string="Certified Chain Tip">
+                            <field name="event_count"/>
+                            <field name="first_log_id"/>
+                            <field name="last_log_id"/>
+                            <field name="chain_hash"/>
+                        </group>
+                        <group string="External Custody">
+                            <field name="state"/>
+                            <field name="is_heartbeat"/>
+                            <field name="sent_at"/>
+                            <field name="receipt"/>
+                            <field name="receipt_date"/>
+                        </group>
+                    </group>
+                    <group string="Transmission Error" invisible="not error_message">
+                        <field name="error_message" nolabel="1" readonly="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Anchor Search View -->
+    <record id="view_audit_anchor_search" model="ir.ui.view">
+        <field name="name">audit.anchor.search</field>
+        <field name="model">audit.anchor</field>
+        <field name="arch" type="xml">
+            <search string="Search Anchors">
+                <field name="chain_hash"/>
+                <field name="receipt"/>
+                <filter name="filter_alerts" string="With Alert"
+                        domain="[('local_alert', '!=', False)]"/>
+                <filter name="filter_undelivered" string="Not Delivered"
+                        domain="[('state', 'in', ('pending', 'failed'))]"/>
+                <filter name="filter_real" string="Exclude Heartbeats"
+                        domain="[('is_heartbeat', '=', False)]"/>
+                <separator/>
+                <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_audit_anchor" model="ir.actions.act_window">
+        <field name="name">Integrity Anchors</field>
+        <field name="res_model">audit.anchor</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_audit_anchor_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">No anchors sent yet</p>
+            <p>
+                Integrity anchoring certifies the tip of your audit chain on an
+                external server, so that entries deleted or rewritten directly in
+                the database cannot go unnoticed. Enable it in
+                Settings &gt; Security Sentinel.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_audit_anchors"
+              name="Integrity Anchors"
+              parent="menu_audit_security_root"
+              action="action_audit_anchor"
+              groups="audit_security_sentinel.group_audit_manager"
+              sequence="20"/>
+
+</odoo>

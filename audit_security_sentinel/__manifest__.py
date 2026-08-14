@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 {
     'name': 'Odoo 19 Security Sentinel: Anti-Fraud & Audit Log',
-    'version': '19.0.2.1.5',
+    'version': '19.0.2.2.0',
     'category': 'Security',
-    'summary': 'Immutable chained HMAC-SHA256 audit logging, sensitive-data masking, role-based detail access, real-time OWL dashboard, compliance reports & automated integrity verification',
+    'summary': 'Immutable chained HMAC-SHA256 audit logging, external integrity anchoring, sensitive-data masking, role-based detail access, real-time OWL dashboard, compliance reports & automated integrity verification',
     'description': """
 Odoo 19 Security Sentinel — Anti-Fraud & Immutable Audit Log
 =============================================================
@@ -14,6 +14,7 @@ Enterprise-grade security module for Odoo 19:
 * **Tamper-Evident Audit Logs** — every create/write/delete sealed with a chained HMAC-SHA256 hash covering user, action, IP, company, resource and details
 * **Sensitive-Data Masking** — passwords, tokens, API keys, IBAN/card numbers and other secrets are stored as <redacted>, never in clear text
 * **Automated Integrity Verification** — cron recalculates the full hash chain and alerts on tampering, deletion or reordering of any record
+* **External Integrity Anchoring** (optional) — periodically certifies the tip of the chain on an external custody service. The HMAC key lives in this database, so direct PostgreSQL access could rewrite an entry and recompute the whole chain; an external anchor cannot be rewritten from here, which makes that tampering detectable. Only the last entry ID, its hash and the record count are transmitted — never log content. Disabled by default.
 * **Compliance Reports** — export audit data to PDF or Excel with one click
 * **Role-Based Access** — Audit User sees metadata only; change details and detailed exports are restricted to the Compliance Officer
 * **IP Address Tracking** — captures client IP with trusted-proxy header support
@@ -42,6 +43,7 @@ only when a Compliance Officer explicitly enables it.
         'security/audit_security.xml',
         'security/ir.model.access.csv',
         'views/audit_log_views.xml',
+        'views/audit_anchor_views.xml',
         'views/audit_rule_views.xml',
         'views/audit_dashboard_action.xml',
         'views/res_config_settings_views.xml',

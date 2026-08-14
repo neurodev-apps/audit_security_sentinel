@@ -6,3 +6,9 @@ __pycache__/
 .vscode/
 *.swp
 *.swo
+
+# Configuracion local de herramientas, no se publica
+.claude/
+.env
+*.key
+*.pem

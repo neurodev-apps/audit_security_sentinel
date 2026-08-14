@@ -50,6 +50,45 @@
                             </div>
                         </setting>
                     </block>
+                    <block title="External Integrity Custody" name="audit_anchor_settings">
+                        <setting
+                            string="External Integrity Anchoring"
+                            help="The HMAC key lives in this database. Anyone with direct PostgreSQL access holds it, can rewrite an entry and recompute the whole chain, and the integrity check would still pass. Anchoring ships only the chain tip (last entry ID, its hash and the record count) to an external custody service that seals it with its own key. No log content ever leaves this database.">
+                            <field name="audit_anchor_enabled"/>
+                            <div class="content-group" invisible="not audit_anchor_enabled">
+                                <div class="row mt-2">
+                                    <label for="audit_anchor_url" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_anchor_url" class="col-lg-6"/>
+                                </div>
+                                <div class="row mt-2">
+                                    <label for="audit_anchor_instance_display" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_anchor_instance_display" class="col-lg-4" readonly="1"/>
+                                </div>
+                                <div class="row mt-2">
+                                    <label for="audit_anchor_status_display" class="col-lg-4 o_light_label"/>
+                                    <field name="audit_anchor_status_display" class="col-lg-6" readonly="1"/>
+                                </div>
+                                <div class="row mt-4">
+                                    <div class="col-lg-8">
+                                        <button
+                                            name="action_register_anchor"
+                                            type="object"
+                                            string="Register Instance"
+                                            class="btn-primary"
+                                            icon="fa-link"
+                                            groups="audit_security_sentinel.group_audit_manager"/>
+                                        <button
+                                            name="action_send_anchor_now"
+                                            type="object"
+                                            string="Send Anchor Now"
+                                            class="btn-secondary ms-2"
+                                            icon="fa-paper-plane"
+                                            groups="audit_security_sentinel.group_audit_manager"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </setting>
+                    </block>
                     <block title="Integrity &amp; Cryptography" name="audit_integrity_settings">
                         <setting
                             string="HMAC Key Verification"

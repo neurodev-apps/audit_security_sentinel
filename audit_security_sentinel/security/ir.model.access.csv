@@ -1,6 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_audit_log_user,audit.log.user,model_audit_log,audit_security_sentinel.group_audit_user,1,0,0,0
 access_audit_log_manager,audit.log.manager,model_audit_log,audit_security_sentinel.group_audit_manager,1,0,0,0
+access_audit_anchor_user,audit.anchor.user,model_audit_anchor,audit_security_sentinel.group_audit_user,1,0,0,0
+access_audit_anchor_manager,audit.anchor.manager,model_audit_anchor,audit_security_sentinel.group_audit_manager,1,1,0,0
 access_audit_rule_user,audit.rule.user,model_audit_rule,audit_security_sentinel.group_audit_user,1,0,0,0
 access_audit_rule_manager,audit.rule.manager,model_audit_rule,audit_security_sentinel.group_audit_manager,1,1,1,1
 access_audit_report_wizard_manager,audit.report.wizard.manager,model_audit_report_wizard,audit_security_sentinel.group_audit_manager,1,1,1,1
